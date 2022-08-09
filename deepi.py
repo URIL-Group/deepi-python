@@ -5,84 +5,34 @@ Russ Shomberg, URI, 2022
 
 import datetime
 from time import sleep
-try:
-    from picamera import PiCamera
-except ImportError:
-    picamera = None
 
 import yaml
 from yaml.loader import SafeLoader
 
-_picam = None
-
-def init():
-    _picam = PiCamera( resolution=(1920,1080),
-                       framerate=30 )
-    sleep(2)
-
-
 def timestamp(self):
     return datetime.now().strftime('%Y%m%d-%H%M%S.%f')
 
-class Recorder(Thread):
 
-    def __init__(self,picam=None):
-        self._picam=picam
+def init_camera(config=None):
 
-    def run(self):
-        output
-        
-        
-        
+    from picamera import PiCamera
+    picam = PiCamera()
 
-class DeepiCamera:
+    if config is not None:
+        pass                    # TODO
 
-    def __init__(self):
-        self.picam = PiCamera( resolution=(1920,1080),
-                               framerate=30
-        )
-        sleep(2)                # wait for camera to wake up
+    while not picam
 
 
-    def capture(self):
-        self.picam.capture(f'~/Pictures/{timestamp()}.png',
-                           use_video_port=True,
-                           splitter_port=0
-        )
+if __name__=="__main__":
 
-    def start_recording(self):
-        pass
+    # TODO: Start logging
 
-    def stop_recording(self):
-        pass
+    # TODO: Test camera access
 
-    def start_stream(self,ouput):
-        pass
+    # TODO: Open config file
 
-    def stop_stream(self):
-        pass
+    # TODO: start streaming socket server (only open 
 
-    def close(self):
-        self.stop_recording()
-        self.stop_stream()
-        self.picam.close()
+    # TODO: 
 
-
-class Lights:
-
-    def __init__(self):
-        self.pin_num = 18
-
-    def turn_on(self):
-        pass
-
-    def turn_off(self):
-        pass
-
-
-# TODO: I2C module
-
-# TODO: SPI module
-
-# TODO: ethernet module
-# TODO: camera arrays
