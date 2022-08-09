@@ -4,6 +4,8 @@ import sys
 import io
 import os
 import shutil
+import logging
+
 from subprocess import Popen, PIPE
 from string import Template
 from struct import Struct
@@ -19,7 +21,6 @@ from ws4py.server.wsgirefserver import ( WSGIServer,
                                          WebSocketWSGIRequestHandler,
                                         )
 from ws4py.server.wsgiutils import WebSocketWSGIApplication
-
 
 def make_websocket_server(resolution,port):
     '''Factory function for websocket server'''
@@ -110,6 +111,7 @@ class WebSocketStream:
         self.broadcast_thread.start()
 
     def shutdown(self):
+        self.websocket_server.shutdown()
         self.websocket_thread.join()
         self.broadcast_thread.stop()
 
@@ -158,6 +160,8 @@ class StreamingHttpServer(HTTPServer):
 
 if __name__ == '__main__':
 
+    logging.basicConfig(format='%(levelname)s: %(message)s',level=logging.DEBUG)
+    
     import picamera
 
     HTTP_PORT = 8080
@@ -165,7 +169,7 @@ if __name__ == '__main__':
 
     streaming_resolution = (640,480)
     
-    print('Initializing camera')
+    logging.info('Initializing camera')
     with picamera.PiCamera() as camera:
 
         camera.resolution = (1280,720)
@@ -174,16 +178,16 @@ if __name__ == '__main__':
         camera.hflip = False 
         sleep(1) # camera warm-up time
         
-        print(f'Initializing HTTP server on port {HTTP_PORT}')
+        logging.info(f'Initializing HTTP server on port {HTTP_PORT}')
         http_server = StreamingHttpServer(HTTP_PORT, ws_port=WS_PORT)
         http_thread = Thread(target=http_server.serve_forever)
         http_thread.start()
 
-        print('Starting websockets thread')
+        logging.info('Starting websockets thread')
         streamer = WebSocketStream(streaming_resolution,
                                    camera.framerate, WS_PORT)
 
-        print('Starting recording')
+        logging.info('Starting recording')
         camera.start_recording(streamer.output, 'yuv', splitter_port=2,
                                resize=streamer.resolution)
         try:
@@ -193,12 +197,11 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             pass
         finally:
-            print('Stopping recording')
+            logging.info('Stopping recording')
             camera.stop_recording(splitter_port=2)
-            socket_streamer.shutdown()
+            streamer.shutdown()
 
-            print('Shutting down HTTP server')
+            logging.info('Shutting down HTTP server')
             http_server.shutdown()
-            print('Waiting for HTTP server thread to finish')
+            logging.info('Waiting for HTTP server thread to finish')
             http_thread.join()
-

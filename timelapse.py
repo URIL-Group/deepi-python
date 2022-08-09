@@ -34,20 +34,21 @@ class TimeLapse(Thread):
 
 
 if __name__=="__main__":
+
     logging.basicConfig(format='%(levelname)s:%(message)s',level=logging.DEBUG)
-
     logging.info("Starting PiCamera")
+
     from picamera import PiCamera
-    picam = PiCamera()
-    sleep(2)
-
-    timelapse = TimeLapse(picam,interval=5)
-    logging.info("Starting timelapse")
-    timelapse.start()
-
-    sleep(30)
-
-    logging.info("Stopping timelapse")
-    timelapse.stop()
-
-    # TODO: check to see if it worked
+    with picamera.PiCamera() as camera:
+        sleep(2)
+        
+        timelapse = TimeLapse(picam,interval=5)
+        logging.info("Starting timelapse")
+        timelapse.start()
+        
+        sleep(30)
+        
+        logging.info("Stopping timelapse")
+        timelapse.stop()
+        
+        # TODO: check to see if it worked
