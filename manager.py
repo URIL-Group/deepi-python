@@ -10,16 +10,18 @@ _picam = PiCamera()
 _picam.close()
 
 ports = [0,1,2,3]
-
 config = None
+
 
 def set_config(config_file):
     assert(_picam.closed is True)
     pass
 
+
 def save_config(config_file):
     pass
     
+
 def close():
     assert(_picam.recording is False)
     _picam.close()
