@@ -14,7 +14,7 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'deepi'
 DESCRIPTION = 'DEEPi control software'
-URL = 'https://github.com/rshom/deepi-pythont'
+URL = 'https://github.com/rshom/deepi-python'
 EMAIL = 'rshomberg@uri.edu'
 AUTHOR = 'Russell Shomberg'
 REQUIRES_PYTHON = '>=3.6.0'
