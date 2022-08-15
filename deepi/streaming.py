@@ -138,7 +138,7 @@ class StreamingHttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
-            self.send_header('Location', '../resources/index.html')
+            self.send_header('Location', 'resources/index.html')
             self.end_headers()
             return
         elif self.path == '/jsmpg.js':
