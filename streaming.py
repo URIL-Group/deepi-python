@@ -22,16 +22,21 @@ from ws4py.server.wsgirefserver import ( WSGIServer,
                                         )
 from ws4py.server.wsgiutils import WebSocketWSGIApplication
 
-def make_websocket_server(resolution,port):
+def make_websocket_server(output,port):
     '''Factory function for websocket server'''
 
     class StreamingWebSocket(WebSocket):
         '''Websocket with a header line added on opening'''
+
         def opened(self):
             JSMPEG_MAGIC = b'jsmp'
             JSMPEG_HEADER = Struct('>4sHH')
-            self.send(JSMPEG_HEADER.pack(JSMPEG_MAGIC, resolution[0],
-                                         resolution[1]), binary=True)
+            self.send(JSMPEG_HEADER.pack(JSMPEG_MAGIC, output.resolution[0],
+                                         output.resolution[1]), binary=True)
+            
+
+        def closed(self, code, reason=None):
+            pass
 
 
     app = WebSocketWSGIApplication( handler_cls=StreamingWebSocket )
@@ -44,8 +49,11 @@ def make_websocket_server(resolution,port):
 class BroadcastOutput:
     '''File-like object that converts video when recorded to'''
 
-    def __init__(self, resolution,framerate):
-        print('Spawning background conversion process')
+    def __init__(self, resolution, framerate):
+
+        self.resolution = resolution
+            
+        logging.info('Spawning background conversion process')
         self.converter = Popen([
             # TODO: understand these options
             'ffmpeg',
@@ -95,18 +103,24 @@ class BroadcastThread(Thread):
         self.running = False
         self.join()
 
+
 class WebSocketStream:
 
-    def __init__(self, resolution, framerate, ws_port):
-        self.resolution = resolution
+    def __init__(self, picam, ws_port, resolution=None, splitter_port=3):
+        if resolution is None:
+            resolution = picam.resolution            
 
         WebSocketWSGIHandler.http_version = '1.1'
-        self.websocket_server = make_websocket_server(resolution, ws_port)
+
+        output = BroadcastOutput(resolution,picam.framerate)
+        self.output = output
+
+        self.websocket_server = make_websocket_server(output, ws_port)
         self.websocket_thread = Thread(target=self.websocket_server.serve_forever)
 
-        self.output = BroadcastOutput(resolution,framerate)
-        self.broadcast_thread = BroadcastThread(self.output.converter,
+        self.broadcast_thread = BroadcastThread(output.converter,
                                                 self.websocket_server)
+
         self.websocket_thread.start()
         self.broadcast_thread.start()
 
@@ -114,6 +128,7 @@ class WebSocketStream:
         self.websocket_server.shutdown()
         self.websocket_thread.join()
         self.broadcast_thread.stop()
+
 
 class StreamingHttpHandler(BaseHTTPRequestHandler):
     '''Create a simple webserver to display'''    
@@ -184,12 +199,13 @@ if __name__ == '__main__':
         http_thread.start()
 
         logging.info('Starting websockets thread')
-        streamer = WebSocketStream(streaming_resolution,
-                                   camera.framerate, WS_PORT)
+        streamer = WebSocketStream(camera, WS_PORT,
+                                   resolution=streaming_resolution,
+                                   splitter_port=2)
 
         logging.info('Starting recording')
         camera.start_recording(streamer.output, 'yuv', splitter_port=2,
-                               resize=streamer.resolution)
+                               resize=streaming_resolution)
         try:
 
             while True:
