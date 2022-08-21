@@ -25,5 +25,14 @@ class DEEPiCamera(PiCamera):
 
         PiCamera.stop_recording(splitter_port=1)
 
-    
+    def start_streaming(self,resize=None):
+
+        output = None           # TODO
+        
+        PiCamera.start_recording(output, format=None, resize=resize,
+                                 splitter_port=2)
+
+    def stop_streaming(self):
+
+        PiCamera.stop_recording(splitter_port=2)
         
