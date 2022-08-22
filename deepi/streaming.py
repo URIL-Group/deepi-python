@@ -132,13 +132,18 @@ class WebSocketStream:
 
 class StreamingHttpHandler(BaseHTTPRequestHandler):
     '''Create a simple webserver to display'''    
+    # FIXME: this class only exists for testing purposes.
     def do_HEAD(self):
         self.do_GET()
 
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
+<<<<<<< HEAD
             self.send_header('Location', 'resources/index.html')
+=======
+            self.send_header('Location', '/index.html')
+>>>>>>> 9e27b95 (reorg)
             self.end_headers()
             return
         elif self.path == '/jsmpg.js':
@@ -161,6 +166,7 @@ class StreamingHttpHandler(BaseHTTPRequestHandler):
 
 
 class StreamingHttpServer(HTTPServer):
+    # FIXME: this class only exists for testing purposes.
     def __init__(self,port=8082, ws_port=8084):
         addr = ('',port)
         HTTPServer.__init__(self, addr, StreamingHttpHandler)        
@@ -170,7 +176,6 @@ class StreamingHttpServer(HTTPServer):
                 WS_PORT=ws_port))
         with io.open('jsmpg.js', 'r') as f:
             self.jsmpg_content = f.read()
-
 
 
 if __name__ == '__main__':

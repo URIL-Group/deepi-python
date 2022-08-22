@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+    <title>DEEPi Webapp</title>
+
+    
+    <link rel="stylesheet" href="/css/pure-min.css">
+    <link rel="stylesheet" href="/css/grids-responsive-min.css">
+    <link rel="stylesheet" href="/css/pure-sidemenu.css">
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+
+    <div id="layout">
+      <!-- Menu toggle -->
+      <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+	<!-- TODO: hamburger does not work -->
+      </a>
+
+
+      
+      <div id="menu">
+        <div class="pure-menu">
+	  
+	  <!-- TODO: show curently attached cells -->
+          <a class="pure-menu-heading" href="#stack">DEEPi Cells</a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+	      <a href="#ice-lights" class="pure-menu-link">ICE Lights</a></li>
+            <li class="pure-menu-item">
+	      <a href="#deepi-camera" class="pure-menu-link">DEEPi Camera</a></li>
+          </ul>
+
+          <a class="pure-menu-heading" href="#main">JUICE</a>
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+	      <a href="#main" class="pure-menu-link">Home</a></li>
+            <li class="pure-menu-item">
+	      <a href="#about" class="pure-menu-link">About</a></li>
+            <!-- <li class="pure-menu-item menu-item-divided pure-menu-selected"> -->
+              <!--   <a href="#" class="pure-menu-link">Services</a></li> -->
+          </ul>
+
+	  
+        </div>
+      </div>
+      
+
+      <div id="main">
+        <div class="header">
+          <h1>DEEPi Webapp</h1>
+          <h2>JUICE Robotics</h2>
+        </div>
+
+        <div class="content">
+	  <div class="pure-g">
+	    <div class="pure-u-1-1" id="stack">
+	      <h2 class="content-subhead">Cell Stack</h2>
+	      <form class="pure-form">
+		
+		<fieldset>
+		  <legend>
+		    Short paragraph or a few sentences on the web app and how
+		    to operate it. May not be necessary at all.
+		  </legend>
+		  
+		  <!-- <label for="stacked-state">Type</label> -->
+		  <select id="select-type">
+		    <option>DEEPi Camera</option>
+		    <option>ICE Lights</option>
+		  </select>
+		  
+		  <input type="text" placeholder="Custom Name" />
+		  
+		  <button type="submit" class="pure-button pure-button-primary">
+		    Add to stack
+		  </button>
+		</fieldset>
+	      </form>
+	      
+	    </div>
+	    <div class="pure-u-1-1" id="ice-lights">
+	      <h2 class="content-subhead">ICE Lights</h2>
+	      <button type="button" class="pure-button">
+		Lights Off</button>
+	    </div>
+
+
+	    <div class="pure-u-1-1" id="deepi-camera">
+              <h2 class="content-subhead">DEEPi Camera</h2>
+	      
+	      <button type="button" class="pure-button">
+		Capture</button>
+	      <button type="button" class="pure-button">
+		Stream Off</button>
+	      <button type="button" class="pure-button">
+		Record Off</button>
+
+	      <canvas id="videoCanvas">
+		<p>Please use a browser that supports the Canvas Element, like <a href="http://www.google.com/chrome">Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox</a>, <a href="http://www.apple.com/safari/">Safari</a> or Internet Explorer 10</p>
+	      </canvas>
+
+
+
+	      <form class="pure-form pure-form-stacked">
+		<fieldset>
+		  <legend>
+		    Camera settings
+		  </legend>
+		  
+		  <label for="select-resolution">Camera Resolution</label>
+		  <select id="select-resolution">
+		    <option>640x480</option>
+		    <option>720p</option>
+		    <option>1080p</option>
+		  </select>
+
+		  <label for="select-stream-resolution">Stream Resolution</label>
+		  <select id="select-stream-resolution">
+		    <option>640x480</option>
+		    <option>720p</option>
+		    <option>1080p</option>
+		  </select>		  
+		  
+		  <button type="submit" class="pure-button pure-button-primary">
+		    Submit
+		  </button>
+		</fieldset>
+	      </form>
+            </div> <!-- deepi-camera -->
+
+
+	    <div class="pure-u-1" id="about">
+	      <h2 class="content-subhead">About</h2>
+
+	      <p>
+		Information about DEEPi and JUICE Robotics
+	      </p>
+
+	    </div> <!-- about -->
+
+
+	  </div>   <!-- pure-g -->
+	</div>	   <!-- content -->
+      </div>
+    </div>
+
+    <script type="text/javascript" src="/js/jsmpg.js"></script>
+    <script type="text/javascript">
+      // Show loading notice
+      var canvas = document.getElementById('videoCanvas');
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#444';
+      ctx.fillText('Loading...', canvas.width/2-30, canvas.height/3);
+
+      // Setup the WebSocket connection and start the player
+      var addr = 'ws://'+window.location.hostname+':{{wsport}}/'
+      var client = new WebSocket(addr);
+      var player = new jsmpeg(client, {canvas:canvas} );
+    </script>
+    
+    <script type="text/javascript" src="/js/ui.js"></script>
+
+  </body>
+</html>
