@@ -7,11 +7,17 @@ def timestamp():
 class DEEPiCamera(PiCamera):
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     def __init__(self,config_file=None):
         
 
 >>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
+=======
+    def __init__(self,config_file=None):
+        
+
+>>>>>>> 7ff78b0 (reorg static files)
     def capture(self):
 
         output = IMAGE_DIR+f'{timestamp()}.jpeg'
@@ -44,6 +50,9 @@ class DEEPiCamera(PiCamera):
 
         PiCamera.stop_recording(splitter_port=2)
 
+<<<<<<< HEAD
 >>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
+=======
+>>>>>>> 7ff78b0 (reorg static files)
     
         
