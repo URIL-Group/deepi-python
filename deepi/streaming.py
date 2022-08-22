@@ -113,22 +113,13 @@ class WebSocketStream:
 
         WebSocketWSGIHandler.http_version = '1.1'
 
-<<<<<<< HEAD
+
         self.output = BroadcastOutput(resolution,picam.framerate)
         self.ws_server = make_websocket_server(self.output, ws_port)
         self.ws_thread = Thread(target=self.ws_server.serve_forever)
         self.broadcast_thread = BroadcastThread(self.output.converter,
                                                 self.ws_server)
 
-=======
-        output = BroadcastOutput(resolution,framerate)
-
-        self.ws_server = make_websocket_server(output, ws_port)
-        self.ws_thread = Thread(target=self.ws_server.serve_forever)
-        self.broadcast_thread = BroadcastThread(output.converter,
-                                                self.ws_server)
-
->>>>>>> 7ff78b0 (reorg static files)
         self.ws_thread.start()
         self.broadcast_thread.start()
 
@@ -147,19 +138,7 @@ class StreamingHttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            self.send_header('Location', 'resources/index.html')
-=======
             self.send_header('Location', '/index.html')
->>>>>>> 9e27b95 (reorg)
-=======
-            self.send_header('Location', '/index.html')
->>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
-=======
-            self.send_header('Location', '/index.html')
->>>>>>> 7ff78b0 (reorg static files)
             self.end_headers()
             return
         elif self.path == '/jsmpg.js':

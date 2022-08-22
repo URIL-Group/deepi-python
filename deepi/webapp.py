@@ -4,16 +4,7 @@ from flask import Flask, render_template, Response
 import logging
 import os
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-from .streaming import WebSocketStream
-=======
 from streaming import WebSocketStream
->>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
-=======
-from .streaming import WebSocketStream
->>>>>>> 7ff78b0 (reorg static files)
-
 
 WS_PORT = 8081
 
@@ -46,35 +37,14 @@ template_dir = os.path.abspath('../resources/templates/')
 static_dir   = os.path.abspath('../resources/static/')
 
 app = Flask(__name__,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 7ff78b0 (reorg static files)
             static_url_path='', 
             static_folder=static_dir,
             template_folder=template_dir)
 
-
-<<<<<<< HEAD
-=======
-            static_url_path='',
-            static_folder=static_dir,
-            template_folder=template_dir)
-
->>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
-=======
->>>>>>> 7ff78b0 (reorg static files)
 @app.route('/')
 def index():
     return render_template('index.html',wsport=WS_PORT)
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-<<<<<<< HEAD
     app.run(host='0.0.0.0',port=5000,debug=False)
-=======
-    app.run(host='0.0.0.0', port=5000, debug=False)
->>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
-=======
-    app.run(host='0.0.0.0',port=5000,debug=False)
->>>>>>> 7ff78b0 (reorg static files)
+
