@@ -113,11 +113,10 @@ class WebSocketStream:
 
         WebSocketWSGIHandler.http_version = '1.1'
 
-        output = BroadcastOutput(resolution,framerate)
-
-        self.ws_server = make_websocket_server(output, ws_port)
+        self.output = BroadcastOutput(resolution,picam.framerate)
+        self.ws_server = make_websocket_server(self.output, ws_port)
         self.ws_thread = Thread(target=self.ws_server.serve_forever)
-        self.broadcast_thread = BroadcastThread(output.converter,
+        self.broadcast_thread = BroadcastThread(self.output.converter,
                                                 self.ws_server)
 
         self.ws_thread.start()

@@ -4,7 +4,7 @@ from flask import Flask, render_template, Response
 import logging
 import os
 
-from .streaming import WebSocketStream
+from streaming import WebSocketStream
 
 
 WS_PORT = 8081
@@ -38,14 +38,13 @@ template_dir = os.path.abspath('../resources/templates/')
 static_dir   = os.path.abspath('../resources/static/')
 
 app = Flask(__name__,
-            static_url_path='', 
+            static_url_path='',
             static_folder=static_dir,
             template_folder=template_dir)
-
 
 @app.route('/')
 def index():
     return render_template('index.html',wsport=WS_PORT)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=5000,debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=False)
