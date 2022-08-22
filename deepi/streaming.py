@@ -106,27 +106,25 @@ class BroadcastThread(Thread):
 
 class WebSocketStream:
 
-    def __init__(self, picam, ws_port, resolution=None, splitter_port=3):
+    def __init__(self,picam, ws_port, resolution=None, splitter_port=3):
+
         if resolution is None:
-            resolution = picam.resolution            
+            resolution = picam.resolution
 
         WebSocketWSGIHandler.http_version = '1.1'
 
-        output = BroadcastOutput(resolution,picam.framerate)
-        self.output = output
+        self.output = BroadcastOutput(resolution,picam.framerate)
+        self.ws_server = make_websocket_server(self.output, ws_port)
+        self.ws_thread = Thread(target=self.ws_server.serve_forever)
+        self.broadcast_thread = BroadcastThread(self.output.converter,
+                                                self.ws_server)
 
-        self.websocket_server = make_websocket_server(output, ws_port)
-        self.websocket_thread = Thread(target=self.websocket_server.serve_forever)
-
-        self.broadcast_thread = BroadcastThread(output.converter,
-                                                self.websocket_server)
-
-        self.websocket_thread.start()
+        self.ws_thread.start()
         self.broadcast_thread.start()
 
     def shutdown(self):
-        self.websocket_server.shutdown()
-        self.websocket_thread.join()
+        self.ws_server.shutdown()
+        self.ws_thread.join()
         self.broadcast_thread.stop()
 
 
@@ -140,10 +138,14 @@ class StreamingHttpHandler(BaseHTTPRequestHandler):
         if self.path == '/':
             self.send_response(301)
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.send_header('Location', 'resources/index.html')
 =======
             self.send_header('Location', '/index.html')
 >>>>>>> 9e27b95 (reorg)
+=======
+            self.send_header('Location', '/index.html')
+>>>>>>> 36a780308675caa1bdd52240a552bb7603d5bbfe
             self.end_headers()
             return
         elif self.path == '/jsmpg.js':
@@ -204,7 +206,7 @@ if __name__ == '__main__':
         http_thread.start()
 
         logging.info('Starting websockets thread')
-        streamer = WebSocketStream(camera, WS_PORT,
+        streamer = WebSocketStream(camera,WS_PORT,
                                    resolution=streaming_resolution,
                                    splitter_port=2)
 
