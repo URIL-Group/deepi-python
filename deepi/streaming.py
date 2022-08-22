@@ -106,27 +106,26 @@ class BroadcastThread(Thread):
 
 class WebSocketStream:
 
-    def __init__(self, picam, ws_port, resolution=None, splitter_port=3):
+    def __init__(self,picam, ws_port, resolution=None, splitter_port=3):
+
         if resolution is None:
-            resolution = picam.resolution            
+            resolution = picam.resolution
 
         WebSocketWSGIHandler.http_version = '1.1'
 
-        output = BroadcastOutput(resolution,picam.framerate)
-        self.output = output
+        output = BroadcastOutput(resolution,framerate)
 
-        self.websocket_server = make_websocket_server(output, ws_port)
-        self.websocket_thread = Thread(target=self.websocket_server.serve_forever)
-
+        self.ws_server = make_websocket_server(output, ws_port)
+        self.ws_thread = Thread(target=self.ws_server.serve_forever)
         self.broadcast_thread = BroadcastThread(output.converter,
-                                                self.websocket_server)
+                                                self.ws_server)
 
-        self.websocket_thread.start()
+        self.ws_thread.start()
         self.broadcast_thread.start()
 
     def shutdown(self):
-        self.websocket_server.shutdown()
-        self.websocket_thread.join()
+        self.ws_server.shutdown()
+        self.ws_thread.join()
         self.broadcast_thread.stop()
 
 
@@ -139,11 +138,7 @@ class StreamingHttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
-<<<<<<< HEAD
             self.send_header('Location', '/index.html')
-=======
-            self.send_header('Location', 'resources/index.html')
->>>>>>> f773d43853065780678490ae6a4fab8dc1f44c0c
             self.end_headers()
             return
         elif self.path == '/jsmpg.js':
@@ -204,7 +199,7 @@ if __name__ == '__main__':
         http_thread.start()
 
         logging.info('Starting websockets thread')
-        streamer = WebSocketStream(camera, WS_PORT,
+        streamer = WebSocketStream(camera,WS_PORT,
                                    resolution=streaming_resolution,
                                    splitter_port=2)
 

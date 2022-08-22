@@ -6,68 +6,63 @@
 import yaml
 import io
 
-# TODO: add webapp for changing config
+from picamera import PiCamera
 
-# Options
-AWB_MODES
-CAMERA_CAPTURE_PORT
-CAMERA_PREVIEW_PORT
-CAMERA_VIDEO_PORT
-CAPTURE_TIMEOUT
-CLOCK_MODES
-DEFAULT_ANNOTATE_SIZE
-DRC_STRENGTHS
-EXPOSURE_MODES
-FLASH_MODES
-IMAGE_EFFECTS
-ISO
-MAX_FRAMERATE
-MAX_RESOLUTION
-METER_MODES
-RAW_FORMATS
-STEREO_MODES
+# Option settings
+PiCamera.AWB_MODES
+PiCamera.CAMERA_CAPTURE_PORT
+PiCamera.CAMERA_PREVIEW_PORT
+PiCamera.CAMERA_VIDEO_PORT
+PiCamera.CAPTURE_TIMEOUT
+PiCamera.CLOCK_MODES
+PiCamera.DEFAULT_ANNOTATE_SIZE
+PiCamera.DRC_STRENGTHS
+PiCamera.EXPOSURE_MODES
+PiCamera.FLASH_MODES
+PiCamera.IMAGE_EFFECTS
+PiCamera.ISO
+PiCamera.MAX_FRAMERATE
+PiCamera.MAX_RESOLUTION
+PiCamera.METER_MODES
+PiCamera.RAW_FORMATS
+PiCamera.STEREO_MODES
 
-# Overlays
-overlays
-add_overlay
-remove_overlay
-annotate_background
-annotate_foreground
-annotate_frame_num
-annotate_text
-annotate_text_size
+# overlays
+# add_overlay
+# remove_overlay
+# annotate_background
+# annotate_foreground
+# annotate_frame_num
+# annotate_text
+# annotate_text_size
 
-# preview options
-preview
-preview_alpha
-preview_fullscreen
-preview_layer
-preview_window
+# preview
+# preview_alpha
+# preview_fullscreen
+# preview_layer
+# preview_window
 
-# Camera functions
-capture
-capture_continuous
-capture_sequence
-record_sequence
-start_preview
-stop_recording
-start_recording
-split_recording
-wait_recording
-stop_preview
-request_key_frame
-close
+# capture
+# capture_continuous
+# capture_sequence
+# record_sequence
+# start_preview
+# stop_recording
+# start_recording
+# split_recording
+# wait_recording
+# stop_preview
+# request_key_frame
+# close
 
-# Status
-closed
-recording
-previewing
-revision
-analog_gain
-digital_gain
-frame
+# closed
+# recording
+# previewing
+# revision
+# analog_gain
+# digital_gain
+# frame
 
-# read only
 exposure_speed
 timestamp
 
@@ -207,10 +202,10 @@ if __name__=='__main__':
     # camconfig = { 'name':"test", 'resolution':[1920,1980] }
     camconfig = get(picam=None)
     print("Writing config to file")
-    save(camconfig, "test.conf")
+    save(camconfig, "../resources/test.conf")
 
     print("Loading config from file")
-    loaded_camconfig = load("test.conf")
+    loaded_camconfig = load("../resources/test.conf")
     assert(camconfig == loaded_camconfig)
     print()
     print("Camera Config:")
