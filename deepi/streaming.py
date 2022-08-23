@@ -110,9 +110,9 @@ class WebSocketStream:
 
         if resolution is None:
             resolution = picam.resolution
+        self._resolution = resolution
 
         WebSocketWSGIHandler.http_version = '1.1'
-
 
         self.output = BroadcastOutput(resolution,picam.framerate)
         self.ws_server = make_websocket_server(self.output, ws_port)
@@ -127,6 +127,10 @@ class WebSocketStream:
         self.ws_server.shutdown()
         self.ws_thread.join()
         self.broadcast_thread.stop()
+
+    @property
+    def resolution(self):
+        return self._resolution
 
 
 class StreamingHttpHandler(BaseHTTPRequestHandler):
