@@ -50,6 +50,7 @@ camera.start_recording(streamer.output, 'yuv',
 def index():
     return render_template('index.html',wsport=WS_PORT)
 
+
 if __name__ == "__main__":
     logging.debug(f"Camera recording: {camera.recording}")
     app.run(host='0.0.0.0',port=5000,debug=False)
