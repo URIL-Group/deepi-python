@@ -113,7 +113,7 @@ class WebSocketStream:
         self._resolution = resolution
 
         WebSocketWSGIHandler.http_version = '1.1'
-
+        
         self.output = BroadcastOutput(resolution,picam.framerate)
         self.ws_server = make_websocket_server(self.output, ws_port)
         self.ws_thread = Thread(target=self.ws_server.serve_forever)
@@ -123,14 +123,14 @@ class WebSocketStream:
         self.ws_thread.start()
         self.broadcast_thread.start()
 
+    @property
+    def resolution(self):
+        return self._resolution
+
     def shutdown(self):
         self.ws_server.shutdown()
         self.ws_thread.join()
         self.broadcast_thread.stop()
-
-    @property
-    def resolution(self):
-        return self._resolution
 
 
 class StreamingHttpHandler(BaseHTTPRequestHandler):
@@ -181,7 +181,8 @@ if __name__ == '__main__':
 
     logging.basicConfig(format='%(levelname)s: %(message)s',level=logging.DEBUG)
     
-    import picamera
+    from deepicamera import DEEPiCamera
+    # from picamera import PiCamera as DEEPiCamera
 
     HTTP_PORT = 8080
     WS_PORT = 8082
@@ -189,13 +190,7 @@ if __name__ == '__main__':
     streaming_resolution = (640,480)
     
     logging.info('Initializing camera')
-    with picamera.PiCamera() as camera:
-
-        camera.resolution = (1280,720)
-        camera.framerate = 30
-        camera.vflip = True
-        camera.hflip = False 
-        sleep(1) # camera warm-up time
+    with DEEPiCamera() as camera:
         
         logging.info(f'Initializing HTTP server on port {HTTP_PORT}')
         http_server = StreamingHttpServer(HTTP_PORT, ws_port=WS_PORT)

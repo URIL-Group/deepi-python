@@ -25,7 +25,7 @@ def get_default():
 
         # Position
         'rotation':0,
-        'vflip': False,
+        'vflip': True,
         'hflip': False,
 
         # Camera Setting
@@ -33,7 +33,7 @@ def get_default():
         'shutter_speed': 0,
 
         # After Effects
-        'brightness': 0,
+        'brightness': 50,
         'contrast': 0,
         'saturation': 0,
         'sharpness': 0,
@@ -42,7 +42,6 @@ def get_default():
         'led': False,
         'flash_mode': 'off',
     }
-    
     return config
 
 def load(fpath):

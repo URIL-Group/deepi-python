@@ -24,27 +24,32 @@ app = Flask(__name__,
 
 # Read Config file
 logging.debug("Reading config file")
-cam_config = camconfig.get_default()
+config = camconfig.get_default()
+config = camconfig.load('../resources/deepi.conf')
 logging.debug(f"Cam config: \n\n\
-{yaml.dump(cam_config, default_flow_style=False)}")
+{yaml.dump(config, default_flow_style=False)}")
 
 # Open camera
 logging.debug("Opening camera")
-camera = DEEPiCamera(cam_config)
+camera = DEEPiCamera(config)
 logging.info('Initializing camera')
 
-streamer = WebSocketStream(camera, WS_PORT, resolution=(640,480),
-                           splitter_port=2)
-recorder = VideoRecorder(camera, splitter_port=1, split_time=10)
-timelapse = TimeLapse(camera,interval=5)
+# recorder = VideoRecorder(camera, splitter_port=1, split_time=10)
+# timelapse = TimeLapse(camera,interval=5)
 
-logging.info('Starting recording')
-camera.start_recording(streamer.output, 'yuv', splitter_port=2,
+logging.info('Starting Stream')
+streamer = WebSocketStream(camera, WS_PORT,
+                           resolution=(640,480),
+                           splitter_port=2)
+
+camera.start_recording(streamer.output, 'yuv',
+                       splitter_port=2,
                        resize=streamer.resolution)
-        
+
 @app.route('/')
 def index():
     return render_template('index.html',wsport=WS_PORT)
 
 if __name__ == "__main__":
+    logging.debug(f"Camera recording: {camera.recording}")
     app.run(host='0.0.0.0',port=5000,debug=False)
