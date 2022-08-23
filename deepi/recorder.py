@@ -7,7 +7,7 @@ import logging
 class VideoRecorder(Thread):
 
     workingdir = '/home/pi/Videos/'
-    # TODO
+    # TODO: add a timestamped folder
     
     def __init__(self,picam, splitter_port=1, split_time=600):
         self.picam = picam
@@ -19,18 +19,16 @@ class VideoRecorder(Thread):
     def run(self):
         num = 1
         self.recording = True
-        output = self.workingdir+f'vid{num:03}'+'.h264'
+        output = self.workingdir+f'vid{num:04}'+'.h264'
         logging.debug(f"Starting recording: {output}")
         self.picam.start_recording(output,splitter_port=self.splitter_port)
-        self.picam.wait_recording(self.split_time,
-                                  splitter_port=self.splitter_port)
         while self.recording:
-            num += 1
-            output = self.workingdir+f'vid{num:03}'+'.h264'
-            logging.debug(f"Splitting  recording: {output}")
-            self.picam.split_recording(output,splitter_port=self.splitter_port)
             self.picam.wait_recording(self.split_time,
                                       splitter_port=self.splitter_port)
+            num += 1
+            output = self.workingdir+f'vid{num:04}'+'.h264'
+            logging.debug(f"Splitting  recording: {output}")
+            self.picam.split_recording(output,splitter_port=self.splitter_port)
 
     def stop(self):
         logging.debug("Stopping recording")

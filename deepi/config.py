@@ -10,6 +10,12 @@ import io
 
 def get_default():
     config = {
+        # Modes
+        'timelapse': False,
+        'timelapse_interval': 0
+        'recorder': False,
+        'recorder_interval': 600
+
         # Basic settings
         'resolution':(1920,1080),
         'framerate':30,

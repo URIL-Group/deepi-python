@@ -5,6 +5,8 @@ import logging
 import os
 
 from streaming import WebSocketStream
+from deepicamera import DEEPiCamera
+import config
 
 WS_PORT = 8081
 
@@ -16,6 +18,7 @@ if __name__ == "__main__":
 
 logging.info('Initializing camera')
 camera = picamera.PiCamera()
+camera.apply_config
 
 camera.resolution = (1280,720)
 camera.framerate = 30
