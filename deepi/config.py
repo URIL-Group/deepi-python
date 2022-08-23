@@ -6,121 +6,33 @@
 import yaml
 import io
 
-from picamera import PiCamera
-
-# Option settings
-PiCamera.AWB_MODES
-PiCamera.CAMERA_CAPTURE_PORT
-PiCamera.CAMERA_PREVIEW_PORT
-PiCamera.CAMERA_VIDEO_PORT
-PiCamera.CAPTURE_TIMEOUT
-PiCamera.CLOCK_MODES
-PiCamera.DEFAULT_ANNOTATE_SIZE
-PiCamera.DRC_STRENGTHS
-PiCamera.EXPOSURE_MODES
-PiCamera.FLASH_MODES
-PiCamera.IMAGE_EFFECTS
-PiCamera.ISO
-PiCamera.MAX_FRAMERATE
-PiCamera.MAX_RESOLUTION
-PiCamera.METER_MODES
-PiCamera.RAW_FORMATS
-PiCamera.STEREO_MODES
-
-# overlays
-# add_overlay
-# remove_overlay
-# annotate_background
-# annotate_foreground
-# annotate_frame_num
-# annotate_text
-# annotate_text_size
-
-# preview
-# preview_alpha
-# preview_fullscreen
-# preview_layer
-# preview_window
-
-# capture
-# capture_continuous
-# capture_sequence
-# record_sequence
-# start_preview
-# stop_recording
-# start_recording
-# split_recording
-# wait_recording
-# stop_preview
-# request_key_frame
-# close
-
-# closed
-# recording
-# previewing
-# revision
-# analog_gain
-# digital_gain
-# frame
-
-exposure_speed
-timestamp
-
-# Basic Settigns
-hflip
-vflip
-rotation
-resolution
-framerate
-framerate_delta
-framerate_range
-zoom
-crop
-
-# Manual Settings
-sensor_mode
-iso
-shutter_speed
-exposure_mode
-exposure_compensation
-brightness
-contrast
-saturation
-sharpness
-
-# After Effects
-awb_mode
-awb_gains
-color_effects                   # tupel
-drc_strength
-image_denoise
-image_effect
-image_effect_params
-
-# Advanced Settings
-video_denoise
-video_stabilization
-exif_tags
-clock_mode
-still_stats
-meter_mode
-raw_format
-
-# Flash
-led
-flash_mode
-
-
-
-
+# from picamera import PiCamera
 
 def get_default():
     config = {
+        # Basic settings
         'resolution':(1920,1080),
         'framerate':30,
+
+        # Position
         'rotation':0,
         'vflip': False,
         'hflip': False,
+
+        # Camera Setting
+        'iso': 0,
+        'shutter_speed': 0,
+        'exposure_mode': 0,
+
+        # After Camera
+        'brightness': 0,
+        'contrast': 0,
+        'saturation': 0,
+        'sharpness': 0,
+
+        # Flash Settings
+        'led': False,
+        'flash_mode': 'off',
     }
     
     return config
@@ -132,12 +44,7 @@ def get(picam=None):
     '''
 
     if picam is None:           # FIXME: For debugging, get rid of
-        config = {
-            'resolution':(1920,1080),
-            'framerate':30,
-            'rotation':0,
-            'vflip': False,
-            'hflip': False,}
+        config = get_default()
         return config
 
     config = {
@@ -160,20 +67,20 @@ def set(picam, config):
     picam.framerate = config['framerate']
 
 
-def load(fname):
+def load(fpath):
     '''Load configuration from a file
 
     Files are in yaml format
 
     '''
 
-    with open("test.conf", 'r') as stream:
+    with open(fpath, 'r') as stream:
         config = yaml.safe_load(stream)
 
     return config
 
 
-def save(config, fname="camconfig.conf"):
+def save(config, fpath="camconfig.conf"):
     '''Save configuration to file
 
     '''
@@ -181,7 +88,7 @@ def save(config, fname="camconfig.conf"):
         # print("correcting tuple")
         config['resolution'] = f"{config['resolution'][0]}x{config['resolution'][1]}"
         
-    with io.open(fname, 'w', encoding='utf8') as outfile:
+    with io.open(fpath, 'w', encoding='utf8') as outfile:
 
         outfile.write("# Camera Config\n")
         
@@ -196,16 +103,33 @@ def validate(config):
     return True
 
 
+# PiCamera.AWB_MODES
+# PiCamera.CAMERA_CAPTURE_PORT
+# PiCamera.CAMERA_PREVIEW_PORT
+# PiCamera.CAMERA_VIDEO_PORT
+# PiCamera.CAPTURE_TIMEOUT
+# PiCamera.CLOCK_MODES
+# PiCamera.DEFAULT_ANNOTATE_SIZE
+# PiCamera.DRC_STRENGTHS
+# PiCamera.EXPOSURE_MODES
+# PiCamera.FLASH_MODES
+# PiCamera.IMAGE_EFFECTS
+# PiCamera.MAX_FRAMERATE
+# PiCamera.MAX_RESOLUTION
+# PiCamera.METER_MODES
+# PiCamera.RAW_FORMATS
+# PiCamera.STEREO_MODES
+
 if __name__=='__main__':
 
+    fpath = '../resources/test.conf'
     print("Creating config")
-    # camconfig = { 'name':"test", 'resolution':[1920,1980] }
     camconfig = get(picam=None)
     print("Writing config to file")
-    save(camconfig, "../resources/test.conf")
+    save(camconfig, fpath)
 
     print("Loading config from file")
-    loaded_camconfig = load("../resources/test.conf")
+    loaded_camconfig = load(fpath)
     assert(camconfig == loaded_camconfig)
     print()
     print("Camera Config:")
