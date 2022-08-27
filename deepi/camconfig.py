@@ -17,7 +17,8 @@ def load(config_loc=None):
 
     config = ConfigParser()
 
-    config.read(os.path.join(os.path.dirname(__file__),'conf','deepi.conf'))
+    # Read default
+    config.read(os.path.join(os.path.dirname(__file__),'conf','default.conf'))
 
     # System configurations in order that overwrites
     locs = [os.curdir, "etc/deepi", os.path.expanduser("~")]

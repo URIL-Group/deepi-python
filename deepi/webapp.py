@@ -7,11 +7,15 @@ import yaml
 logging.basicConfig(format='%(levelname)s: %(message)s',
                     level=logging.DEBUG)
 
-from ../streaming import WebSocketStream
-from ../timelapse import TimeLapse
-from ../recorder import VideoRecorder
-from ../deepicamera import DEEPiCamera
-import ../camconfig
+from streaming import WebSocketStream
+from timelapse import TimeLapse
+from recorder import VideoRecorder
+from deepicamera import DEEPiCamera
+
+import camera 
+import camconfig
+
+config = camconfig.load('webapp.conf')
 
 WS_PORT = 8081
 
