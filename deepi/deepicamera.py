@@ -31,8 +31,6 @@ class Singleton(type):
         #     cls._instances[cls].__init__(*args, **kwargs)
         return cls._instances[cls]
 
-
-
 class DEEPiCamera(PiCamera,metaclass=Singleton):
 
     def __init__(self,config=None):

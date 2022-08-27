@@ -1,113 +1,54 @@
-#! /usr/bin/env python
-'''Open a configuration file and set up camera settings
+#! /usr/env/python3
+'''Load camera config
 
 '''
 
+import os
+from configparser import ConfigParser
 import logging
-import io
-import yaml
-from picamera import PiCamera
 
-# from picamera import PiCamera
+def load(config_loc=None):
+    '''Load camera config files
 
-def get_default():
-    config = {
-        # Modes
-        'webapp': True,
-        'timelapse': False,
-        'timelapse_interval': 0,
-        'recorder': False,
-        'recorder_interval': 600,
-
-        # Basic settings
-        'resolution': '1920x1080',
-        'framerate':30,
-
-        # Position
-        'rotation':0,
-        'vflip': True,
-        'hflip': False,
-
-        # Camera Setting
-        'iso': 0,
-        'shutter_speed': 0,
-
-        # After Effects
-        'brightness': 50,
-        'contrast': 0,
-        'saturation': 0,
-        'sharpness': 0,
-
-        # Flash Settings
-        'led': False,
-        'flash_mode': 'off',
-    }
-    return config
-
-def load(fpath):
-    '''Load configuration from a file
-
-    Files are in yaml format
+    If multiple files are found, all are read, but there is an order
+    of operations that determines read order
 
     '''
 
-    with open(fpath, 'r') as stream:
-        config = yaml.safe_load(stream)
+    config = ConfigParser()
+
+    config.read(os.path.join(os.path.dirname(__file__),'conf','deepi.conf'))
+
+    # System configurations in order that overwrites
+    locs = [os.curdir, "etc/deepi", os.path.expanduser("~")]
+    for loc in locs:
+        try: 
+            config.read( os.path.join(loc,"deepi.conf") )
+            logging.debug(f"Reading config file: {loc}")
+        except IOError:
+            logging.debug(f"No config found at {loc}")
+
+    if os.environ.get("DEEPI_CONF") is not None:
+        # Reading environmental variable if set up
+        logging.debug(f"Looking for config in {loc}")
+        config.read( os.path.join(loc,"deepi.conf") )
+
+    if config_loc is not None:
+        # finally reading specified file
+        logging.debug(f"Reading config file: {config_loc}")
+        config.read(fpath)
 
     return config
-
-
-def save(config, fpath="camconfig.conf"):
-    '''Save configuration to file
-
-    '''
-    if type(config['resolution']) is tuple:
-        # print("correcting tuple")
-        config['resolution'] = f"{config['resolution'][0]}x{config['resolution'][1]}"
-        
-    with io.open(fpath, 'w', encoding='utf8') as outfile:
-        outfile.write("# Camera Config\n")
-        yaml.dump(config, outfile, default_flow_style=False,
-                  allow_unicode=True)
-
-
-def validate(config):
-    '''Check if config values are valid
     
-    '''
-    # PiCamera.AWB_MODES
-    # PiCamera.CAMERA_CAPTURE_PORT
-    # PiCamera.CAMERA_PREVIEW_PORT
-    # PiCamera.CAMERA_VIDEO_PORT
-    # PiCamera.CAPTURE_TIMEOUT
-    # PiCamera.CLOCK_MODES
-    # PiCamera.DEFAULT_ANNOTATE_SIZE
-    # PiCamera.DRC_STRENGTHS
-    # PiCamera.EXPOSURE_MODES
-    # PiCamera.FLASH_MODES
-    # PiCamera.IMAGE_EFFECTS
-    # PiCamera.MAX_FRAMERATE
-    # PiCamera.MAX_RESOLUTION
-    # PiCamera.METER_MODES
-    # PiCamera.RAW_FORMATS
-    # PiCamera.STEREO_MODES
-    return True
-
-
-
 if __name__=='__main__':
+    logging.basicConfig(format='%(levelname)s: %(message)s',
+                        level=logging.DEBUG)
 
-    fpath = '../resources/test.conf'
-    print("Creating config")
-    camconfig = get_default()
-    print("Writing config to file")
-    save(camconfig, fpath)
+    config = load()
 
-    print("Loading config from file")
-    loaded_camconfig = load(fpath)
-    assert(camconfig == loaded_camconfig)
-    print()
-    print("Camera Config:")
-    print(yaml.dump(camconfig, default_flow_style=False))
+    print("======== All Sections ===============")
+    for section_name, section in config.items():
 
-    
+        print(f"======== {section_name} ===============")
+        for sec_key, sec_val in config.items(section_name):
+            print("{:20s} - {}".format(sec_key, sec_val))
