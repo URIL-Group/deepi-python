@@ -72,20 +72,22 @@
               <h2 class="content-subhead">DEEPi Camera</h2>
 
 	      <div class="pure-u-1-5" id="deepi-ctrl">
-	      <form action="/capture/" method="post">
-		<button name="captureBtn" type="submit"
-		class="pure-button">Capture</button>
-	      </form>
-
-	      <form action="/record_toggle/" method="post">
-		<button name="recordBtn" type="submit"
-		class="pure-button">Record (On/Off)</button>
-	      </form>
-
-	      <form action="/stream_toggle/" method="post">
+		
+		<form action="/capture/" method="post">
+		  <button name="captureBtn" type="submit"
+			  class="pure-button">Capture</button>
+		</form>
+		
+		<form action="/record_toggle/" method="post">
+		  <button name="recordBtn" type="submit"
+			  class="pure-button">Record (On/Off)</button>
+		</form>
+		
+		<form action="/stream_toggle/" method="post">
 		<button name="streamBtn" type="submit"
-		class="pure-button">Stream (On/Off)</button>
-	      </form>
+			class="pure-button">Stream (On/Off)</button>
+		</form>
+
 	      </div>
 
 	      <!-- <p> -->
@@ -194,7 +196,9 @@
       var client = new WebSocket(addr);
       var player = new jsmpeg(client, {canvas:canvas} );
     </script>
+    
     <script type="text/javascript" src="/js/ui.js"></script>
+    <script type="text/javascript" src="/js/htmx.min.js"></script>    
 
   </body>
 </html>

@@ -11,6 +11,16 @@ from time import sleep
 from picamera import PiCamera
 import camconfig
 
+# TODO: this works but need to impliment close and open
+# import picamera
+# class PiCamera(picamera.PiCamera):
+#     '''Singleton modifications'''
+#     def __call__(self):
+#         return self
+#     def close(self):
+#         pass
+# PiCamera = PiCamera()
+
 
 # TODO: make sure these directories exist
 # TODO: put these in the config
