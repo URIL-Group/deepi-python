@@ -18,6 +18,7 @@ def load(config_loc=None):
     config = ConfigParser()
 
     # Read default
+    logging.debug("Reading default config")
     config.read(os.path.join(os.path.dirname(__file__),'conf','default.conf'))
 
     # System configurations in order that overwrites
@@ -37,7 +38,8 @@ def load(config_loc=None):
     if config_loc is not None:
         # finally reading specified file
         logging.debug(f"Reading config file: {config_loc}")
-        config.read(fpath)
+        # TODO: check if it exists
+        config.read(config_loc)
 
     return config
     
@@ -45,7 +47,7 @@ if __name__=='__main__':
     logging.basicConfig(format='%(levelname)s: %(message)s',
                         level=logging.DEBUG)
 
-    config = load()
+    config = load('conf/default.conf')
 
     print("======== All Sections ===============")
     for section_name, section in config.items():

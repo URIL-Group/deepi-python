@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="/css/grids-responsive-min.css">
     <link rel="stylesheet" href="/css/pure-sidemenu.css">
     <link rel="stylesheet" href="/css/styles.css">
+
+    <style>
+      #deepi-ctrl .pure-button {
+	  width: 100%;
+	  text-align: right;
+      }
+      </style>
+      
   </head>
   <body>
 
@@ -59,7 +67,77 @@
 
         <div class="content">
 	  <div class="pure-g">
-	    <div class="pure-u-1-1" id="stack">
+
+	    <div class="pure-u-1-1" id="deepi-camera">
+              <h2 class="content-subhead">DEEPi Camera</h2>
+
+	      <div class="pure-u-1-5" id="deepi-ctrl">
+	      <form action="/capture/" method="post">
+		<button name="captureBtn" type="submit"
+		class="pure-button">Capture</button>
+	      </form>
+
+	      <form action="/record_toggle/" method="post">
+		<button name="recordBtn" type="submit"
+		class="pure-button">Record (On/Off)</button>
+	      </form>
+
+	      <form action="/stream_toggle/" method="post">
+		<button name="streamBtn" type="submit"
+		class="pure-button">Stream (On/Off)</button>
+	      </form>
+	      </div>
+
+	      <!-- <p> -->
+	      <!-- 	<button type="button" class="pure-button"> -->
+	      <!-- 	  Capture</button> -->
+	      <!-- 	<button type="button" class="pure-button"> -->
+	      <!-- 	  Stream Off</button> -->
+	      <!-- 	<button type="button" class="pure-button"> -->
+	      <!-- 	  Record Off</button> -->
+	      <!-- </p> -->
+
+	      <div class="pure-u-1-5" id="deepi-stream">
+	      <canvas id="videoCanvas" style="width:640px; height:480px;"> <p>Please use a browser that supports the Canvas Element, like <a href="http://www.google.com/chrome">Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox</a>, <a href="http://www.apple.com/safari/">Safari</a> or Internet Explorer 10</p> </canvas>
+	      <p>
+		<a href="/stream/">Full Resolution</a>
+	      </p>
+	      </div>
+
+	      <!-- <form class="pure-form pure-form-stacked"> -->
+	      <!-- 	<fieldset> -->
+	      <!-- 	  <legend> -->
+	      <!-- 	    Camera settings -->
+	      <!-- 	  </legend> -->
+		  
+	      <!-- 	  <label for="select-resolution">Camera Resolution</label> -->
+	      <!-- 	  <select id="select-resolution"> -->
+	      <!-- 	    <option>640x480</option> -->
+	      <!-- 	    <option>720p</option> -->
+	      <!-- 	    <option>1080p</option> -->
+	      <!-- 	  </select> -->
+
+	      <!-- 	  <label for="select-stream-resolution">Stream Resolution</label> -->
+	      <!-- 	  <select id="select-stream-resolution"> -->
+	      <!-- 	    <option>640x480</option> -->
+	      <!-- 	    <option>720p</option> -->
+	      <!-- 	    <option>1080p</option> -->
+	      <!-- 	  </select>		   -->
+		  
+	      <!-- 	  <button type="submit" class="pure-button pure-button-primary"> -->
+	      <!-- 	    Submit -->
+	      <!-- 	  </button> -->
+	      <!-- 	</fieldset> -->
+	      <!-- </form> -->
+            </div> <!-- deepi-camera -->
+
+	    <div class="pure-u-1-1" id="ice-lights">
+	      <h2 class="content-subhead">ICE Lights</h2>
+	      <button type="button" class="pure-button">
+		Lights Off</button>
+	    </div>
+
+<div class="pure-u-1-1" id="stack">
 	      <h2 class="content-subhead">Cell Stack</h2>
 	      <form class="pure-form">
 		
@@ -84,56 +162,8 @@
 	      </form>
 	      
 	    </div>
-	    <div class="pure-u-1-1" id="ice-lights">
-	      <h2 class="content-subhead">ICE Lights</h2>
-	      <button type="button" class="pure-button">
-		Lights Off</button>
-	    </div>
 
-
-	    <div class="pure-u-1-1" id="deepi-camera">
-              <h2 class="content-subhead">DEEPi Camera</h2>
-	      
-	      <button type="button" class="pure-button">
-		Capture</button>
-	      <button type="button" class="pure-button">
-		Stream Off</button>
-	      <button type="button" class="pure-button">
-		Record Off</button>
-
-	      <canvas id="videoCanvas">
-		<p>Please use a browser that supports the Canvas Element, like <a href="http://www.google.com/chrome">Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox</a>, <a href="http://www.apple.com/safari/">Safari</a> or Internet Explorer 10</p>
-	      </canvas>
-
-
-
-	      <form class="pure-form pure-form-stacked">
-		<fieldset>
-		  <legend>
-		    Camera settings
-		  </legend>
-		  
-		  <label for="select-resolution">Camera Resolution</label>
-		  <select id="select-resolution">
-		    <option>640x480</option>
-		    <option>720p</option>
-		    <option>1080p</option>
-		  </select>
-
-		  <label for="select-stream-resolution">Stream Resolution</label>
-		  <select id="select-stream-resolution">
-		    <option>640x480</option>
-		    <option>720p</option>
-		    <option>1080p</option>
-		  </select>		  
-		  
-		  <button type="submit" class="pure-button pure-button-primary">
-		    Submit
-		  </button>
-		</fieldset>
-	      </form>
-            </div> <!-- deepi-camera -->
-
+	    
 
 	    <div class="pure-u-1" id="about">
 	      <h2 class="content-subhead">About</h2>

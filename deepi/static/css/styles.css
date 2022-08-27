@@ -1,4 +1,5 @@
-.center {
-    justify-content: center;
-    text-align: center;    
+#deepi-ctrl .pure-button {
+  width: 100%;
+  text-align: right;
 }
+

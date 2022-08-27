@@ -9,7 +9,6 @@ Russ Shomberg, URI, 2022
 import logging
 from time import sleep
 from picamera import PiCamera
-
 import camconfig
 
 
@@ -42,16 +41,16 @@ class BaseCamera:
     def __init__(self,config=None):
         self._picam = SingletonPiCamera()
         if config is None:
-            config = camconfig.load(config)
+            config = camconfig.load()
         self._config = config
 
-        self.resolution = config.get('DEFAULT','resolution')
-        self.framerate = config.getfloat('DEFAULT','framerate')
+        self.resolution = config.get('CAMERA','resolution')
+        self.framerate = config.getfloat('CAMERA','framerate')
         # TODO: led/flash
         # TODO: effects options
         self.hflip = config.getboolean('VIEW','hflip')
         self.vflip = config.getboolean('VIEW','vflip')
-        self.vflip = config.getint('VIEW','rotation')
+        self.rotation = config.getint('VIEW','rotation')
 
     @property
     def resolution(self):

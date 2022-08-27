@@ -1,0 +1,38 @@
+<html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+    <title>DEEPi Webapp</title>
+
+    
+    <link rel="stylesheet" href="/css/pure-min.css">
+    <link rel="stylesheet" href="/css/grids-responsive-min.css">
+    <link rel="stylesheet" href="/css/pure-sidemenu.css">
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+
+    <canvas id="videoCanvas" class="center"> <p>Please use a browser that
+	supports the Canvas Element,
+	like <a href="http://www.google.com/chrome">Chrome</a>, <a href="http://www.mozilla.com/firefox/">Firefox</a>, <a href="http://www.apple.com/safari/">Safari</a>
+	or Internet Explorer 10</p> </canvas>
+
+    <script type="text/javascript" src="/js/jsmpg.js"></script>
+    <script type="text/javascript">
+      // Show loading notice
+      var canvas = document.getElementById('videoCanvas');
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#444';
+      ctx.fillText('Loading...', canvas.width/2-30, canvas.height/3);
+
+      // Setup the WebSocket connection and start the player
+      var addr = 'ws://'+window.location.hostname+':{{wsport}}/'
+      var client = new WebSocket(addr);
+      var player = new jsmpeg(client, {canvas:canvas} );
+    </script>
+    <script type="text/javascript" src="/js/ui.js"></script>
+
+  </body>
+</html>
