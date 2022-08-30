@@ -12,6 +12,7 @@ from streaming import WebSocketStream
 from timelapse import TimeLapse
 from recorder import VideoRecorder
 from deepicamera import DEEPiCamera
+from lights import Lights
 
 from picamera.mmalobj import to_resolution
 
@@ -39,6 +40,7 @@ logging.debug("Opening camera")
 logging.info('Initializing camera')
 camera = camera.BaseCamera(config)
 picam = camera._picam           # FIXME
+lights = Lights(12)
 
 # recorder = VideoRecorder(camera, splitter_port=1, split_time=10)
 # timelapse = TimeLapseCamera(camera,interval=5)
@@ -97,6 +99,12 @@ def stream_toggle():
                               resize=streamer.resolution)
         logging.debug("Started stream")        
     return redirect('/')
+
+@app.route('/lights_toggle/', methods=['POST'])
+def lights_toggle():
+    lights.toggle()
+
+    
 
 
 if __name__ == "__main__":
