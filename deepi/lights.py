@@ -31,7 +31,7 @@ class Lights:
         
     def toggle(self):
         self.status = not self.status
-        self.set(100*status)
+        self.set(100*self.status)
 
 
 if __name__=='__main__':
@@ -39,6 +39,7 @@ if __name__=='__main__':
                     level=logging.DEBUG)
 
     lights = Lights(12)
+    from time import sleep
 
     while True:
         for dc in range(100):

@@ -103,7 +103,7 @@ def stream_toggle():
 @app.route('/lights_toggle/', methods=['POST'])
 def lights_toggle():
     lights.toggle()
-
+    return redirect('/')
     
 
 
