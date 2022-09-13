@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deepi"
+version = "0.0.1"
+authors = [
+  { name="Russell Shomberg", email="rshomberg@uri.edu" },
+]
+description = "Python wrapper for controlling DEEPi cameras"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/uril/deepi-python"
+"Bug Tracker" = "https://github.com/uril/deepi-python/issues"

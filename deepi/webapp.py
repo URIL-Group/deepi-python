@@ -19,6 +19,11 @@ from picamera.mmalobj import to_resolution
 import camera 
 import camconfig
 
+
+def make_app(conf):
+    # TODO
+    return None
+
 logging.debug("Reading config file")
 config = camconfig.load('conf/webapp.conf')
 
