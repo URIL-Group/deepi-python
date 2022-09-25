@@ -1,10 +1,19 @@
 # Python DEEPi
-> Python control software for DEEPi hardware
+
+Python control software for DEEPi hardware
+
+## Installation ##
+
+
 
 ## Usage ##
 
 
 
-## Authors ##
+## Contributing ##
 
-  * Russ Shomberg, URI
+Contact [URIL lab](https://web.uri.edu/uril/).
+
+## License ##
+
+Distributed under the MIT License. See `LICENSE` for more information.
