@@ -11,17 +11,16 @@ logging.basicConfig(format='%(levelname)s: %(message)s',
 from streaming import WebSocketStream
 from timelapse import TimeLapse
 from recorder import VideoRecorder
-from deepicamera import DEEPiCamera
 from lights import Lights
-
-from picamera.mmalobj import to_resolution
-
 import camera 
 import camconfig
 
+from picamera.mmalobj import to_resolution
 
-def make_app(conf):
-    # TODO
+
+
+
+def make_app(conf=None):        # TODO
     return None
 
 logging.debug("Reading config file")
@@ -41,7 +40,6 @@ app = Flask(__name__,
 
 # Open camera
 logging.debug("Opening camera")
-#camera = DEEPiCamera(config)
 logging.info('Initializing camera')
 camera = camera.BaseCamera(config)
 picam = camera._picam           # FIXME

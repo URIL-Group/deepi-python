@@ -1,5 +1,5 @@
 #! /usr/env/python3
-'''Load camera config
+'''Camera configuration modue
 
 '''
 
@@ -10,8 +10,15 @@ import logging
 def load(config_loc=None):
     '''Load camera config files
 
-    If multiple files are found, all are read, but there is an order
-    of operations that determines read order
+    If multiple files are found, all are read in order. Dupicate settings are
+    overwritten in order of precedence.
+
+    1. `config_loc` passed to function
+    2. File defined by environmental variable DEEPI_CONF
+    3. `./deepi.conf`
+    4. `~/deepi.conf`
+    5. `/etc/deepi/deepi.conf`
+    6. Default settings
 
     '''
 
@@ -22,7 +29,7 @@ def load(config_loc=None):
     config.read(os.path.join(os.path.dirname(__file__),'conf','default.conf'))
 
     # System configurations in order that overwrites
-    locs = [os.curdir, "etc/deepi", os.path.expanduser("~")]
+    locs = ["etc/deepi", os.path.expanduser("~"), os.curdir]
     for loc in locs:
         try: 
             config.read( os.path.join(loc,"deepi.conf") )
@@ -44,6 +51,9 @@ def load(config_loc=None):
     return config
     
 if __name__=='__main__':
+    
+    '''Test loading the default'''
+
     logging.basicConfig(format='%(levelname)s: %(message)s',
                         level=logging.DEBUG)
 

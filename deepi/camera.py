@@ -1,8 +1,5 @@
 #! /usr/bin/env python
-
 '''Wrapper for the PiCamera class that automates some portions for the DEEPi
-
-Russ Shomberg, URI, 2022
 
 '''
 
@@ -11,21 +8,13 @@ from time import sleep
 from picamera import PiCamera
 import camconfig
 
-# TODO: this works but need to impliment close and open
-# import picamera
-# class PiCamera(picamera.PiCamera):
-#     '''Singleton modifications'''
-#     def __call__(self):
-#         return self
-#     def close(self):
-#         pass
-# PiCamera = PiCamera()
-
-
 # TODO: make sure these directories exist
 # TODO: put these in the config
 
 def timestamp():
+    '''Return a simple timestamp for saving fies
+
+    '''
     return datetime.now().strftime('%Y%m%d-%H%M%S.%f')
 
 class Singleton(type):
@@ -35,12 +24,16 @@ class Singleton(type):
     _instances = {}
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super(Singleton,
+                                        cls).__call__(*args, **kwargs)
         # else:
         #     cls._instances[cls].__init__(*args, **kwargs)
         return cls._instances[cls]
 
 class SingletonPiCamera(PiCamera,metaclass=Singleton):
+    '''Redefines picamera as class as a singleton
+
+    '''
 
     def __init__(self):
         PiCamera.__init__(self)
