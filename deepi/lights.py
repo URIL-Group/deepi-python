@@ -10,12 +10,14 @@ GPIO.setmode(GPIO.BCM)
 
 class Lights:
 
-    status = True
+    status = False
 
     def __init__(self, pin=LED_PIN):
+        logging.debug(f"Initiaizing lights on pin {pin}.")
         GPIO.setup(LED_PIN,GPIO.OUT)
         self.pwm = GPIO.PWM(LED_PIN,1000)
         self.pwm.start(0)
+        self.on()               # default is on in case no webapp
 
     def set(self,duty_cycle):
         logging.debug(f"Set LED duty cycle: {duty_cycle}")

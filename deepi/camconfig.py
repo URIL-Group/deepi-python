@@ -7,7 +7,7 @@ import os
 from configparser import ConfigParser
 import logging
 
-def load(config_loc=None):
+def load(config_loc:str=None) -> ConfigParser:
     '''Load camera config files
 
     If multiple files are found, all are read in order. Dupicate settings are
@@ -50,6 +50,8 @@ def load(config_loc=None):
 
     return config
     
+
+
 if __name__=='__main__':
     
     '''Test loading the default'''

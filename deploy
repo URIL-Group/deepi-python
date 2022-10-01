@@ -1,0 +1,15 @@
+#! /usr/bin/env python
+'''Deployment script for standard DEEPi
+
+'''
+
+import logging
+from picamera import PiCamera
+
+
+logging.basicConfig(format='%(levelname)s: %(message)s',
+                    level=logging.INFO)
+# TODO: log to file
+
+picam = PiCamera(resolution=(1920,1080), framerate=24)
+
