@@ -4,12 +4,31 @@
 '''
 
 import logging
-from picamera import PiCamera
-
+from deepi import load_config, load_camera
+from deepi import make_camera, make_recorder, make_streamer, make_app, Lights
+# from deepi import WebSocketStream, VideoRecorder, StillCamera, Lights
 
 logging.basicConfig(format='%(levelname)s: %(message)s',
-                    level=logging.INFO)
-# TODO: log to file
+                    level=logging.DEBUG)
 
-picam = PiCamera(resolution=(1920,1080), framerate=24)
+# Config
+logging.debug("Reading config file")
+config = load_config()
 
+# Set up camera
+logging.info('Initializing camera')
+picam = load_camera(config)
+
+# Set up cameras
+stillcam = make_camera(picam, config)
+recorder = make_recorder(picam, config)
+streamer = make_streamer(picam, config)
+
+# Lights
+logging.debug("Starting lights")
+pin_num = config.getint('LIGHTS', 'gpio')
+lights = Lights(pin_num)
+
+# Generate app
+app = make_app(stillcam, recorder, streamer, lights)
+app.run(host='0.0.0.0',port=5000,debug=False)

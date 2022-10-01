@@ -4,5 +4,7 @@ from .camconfig import *
 from .webapp import *
 from .lights import *
 from .camera import *
+from .streaming import *
+
 
 

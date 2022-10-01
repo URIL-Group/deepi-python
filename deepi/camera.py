@@ -10,9 +10,6 @@ from datetime import datetime
 
 from picamera import PiCamera
 
-import camconfig
-
-
 # TODO: make sure these directories exist
 # TODO: put these in the config
 
@@ -155,6 +152,8 @@ class TimelapseRecorder(StillCamera):
 
 
 if __name__=='__main__':
+    import camconfig
+
     logging.basicConfig(format='%(levelname)s: %(message)s',
                         level=logging.DEBUG)
 

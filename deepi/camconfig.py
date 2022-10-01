@@ -7,7 +7,7 @@ import os
 from configparser import ConfigParser
 import logging
 
-def load(config_loc:str=None) -> ConfigParser:
+def load_config(config_loc:str=None) -> ConfigParser:
     '''Load camera config files
 
     If multiple files are found, all are read in order. Dupicate settings are
@@ -59,7 +59,7 @@ if __name__=='__main__':
     logging.basicConfig(format='%(levelname)s: %(message)s',
                         level=logging.DEBUG)
 
-    config = load('conf/default.conf')
+    config = load_config('conf/default.conf')
 
     print("======== All Sections ===============")
     for section_name, section in config.items():
