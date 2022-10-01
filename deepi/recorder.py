@@ -10,7 +10,7 @@ class VideoRecorder(Thread):
     workingdir = '/home/pi/Videos/'
     # TODO: add a timestamped folder
     
-    def __init__(self,picam: PiCamera, splitter_port=1, split_time=600)->None:
+    def __init__(self,picam:PiCamera, splitter_port=1, split_time=600):
         self.picam = picam
         self.split_time = split_time
         self.splitter_port = splitter_port

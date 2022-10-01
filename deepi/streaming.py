@@ -106,11 +106,20 @@ class BroadcastThread(Thread):
 
 class WebSocketStream:
 
-    def __init__(self,picam, ws_port, resolution=None, splitter_port=3):
+    streaming = False
+
+    def __init__(self,picam, ws_port, resolution=None, splitter_port=2):
+
+        self.port = splitter_port
 
         if resolution is None:
             resolution = picam.resolution
         self._resolution = resolution
+
+        logging.debug(f"Streaming resolution: {resolution}")
+        logging.debug(f"Streaming splitter_port: {spitter_port}")
+        logging.debug(f"Streaming websocket port: {ws_port}")
+
 
         WebSocketWSGIHandler.http_version = '1.1'
         
@@ -128,9 +137,24 @@ class WebSocketStream:
         return self._resolution
 
     def shutdown(self):
+        logging.debug("Shutting down stream")
         self.ws_server.shutdown()
         self.ws_thread.join()
         self.broadcast_thread.stop()
+
+    def start(self):
+        logging.debug("Starting websocket stream")
+        self.picam.start_recording(self.output, 'yuv', spitter_port=self.port)
+
+    def stop(self):
+        logging.debug("Stopping websocket stream")
+        self.picam.stop_recording(splitter_port=self.port)
+
+    def toggle(self):
+        if self.streaming:
+            self.stop()
+        else:
+            self.start()
 
 
 class StreamingHttpHandler(BaseHTTPRequestHandler):
@@ -181,8 +205,7 @@ if __name__ == '__main__':
 
     logging.basicConfig(format='%(levelname)s: %(message)s',level=logging.DEBUG)
     
-    from deepicamera import DEEPiCamera
-    # from picamera import PiCamera as DEEPiCamera
+    from picamera import PiCamera as DEEPiCamera
 
     HTTP_PORT = 8080
     WS_PORT = 8082

@@ -1,19 +1,15 @@
 #! /usr/bin/env python
-'''Deployment script
+'''Deployment script for standard DEEPi
 
-Russ Shomberg, URI, 2022
 '''
 
 import logging
-from deepi.deepicamera import DEEPiCamera
-from deepi import camconfig
-import yaml
+from picamera import PiCamera
+
 
 logging.basicConfig(format='%(levelname)s: %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
+# TODO: log to file
 
+picam = PiCamera(resolution=(1920,1080), framerate=24)
 
-from deepi.webapp import app
-
-if __name__=='__main__':
-    app.run(host='0.0.0.0',port=5000,debug=False)

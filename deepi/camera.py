@@ -1,124 +1,144 @@
 #! /usr/bin/env python
-
 '''Wrapper for the PiCamera class that automates some portions for the DEEPi
-
-Russ Shomberg, URI, 2022
 
 '''
 
 import logging
+import os
 from time import sleep
-from picamera import PiCamera
-import camconfig
+from datetime import datetime
 
-# TODO: this works but need to impliment close and open
-# import picamera
-# class PiCamera(picamera.PiCamera):
-#     '''Singleton modifications'''
-#     def __call__(self):
-#         return self
-#     def close(self):
-#         pass
-# PiCamera = PiCamera()
+from picamera import PiCamera
+
+import camconfig
 
 
 # TODO: make sure these directories exist
 # TODO: put these in the config
 
 def timestamp():
-    return datetime.now().strftime('%Y%m%d-%H%M%S.%f')
-
-class Singleton(type):
-    '''Singleton metaclass to ensure camera cannot be opened twice
+    '''Return a simple timestamp for saving fies
 
     '''
-    _instances = {}
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        # else:
-        #     cls._instances[cls].__init__(*args, **kwargs)
-        return cls._instances[cls]
+    return datetime.now().strftime('%Y%m%dT%H%M%S')
 
-class SingletonPiCamera(PiCamera,metaclass=Singleton):
+# class Singleton(type):
+#     '''Singleton metaclass to ensure camera cannot be opened twice
 
-    def __init__(self):
-        PiCamera.__init__(self)
-        logging.debug(f"Camera initiated:{self}")
+#     '''
+#     _instances = {}
+#     def __call__(cls, *args, **kwargs):
+#         if cls not in cls._instances:
+#             cls._instances[cls] = super(Singleton,
+#                                         cls).__call__(*args, **kwargs)
+#         else:
+#             # cls._instances[cls].__init__(*args, **kwargs)
+#             logging.warning("Camera already open! Returning previous instance")
+#         return cls._instances[cls]
 
-class BaseCamera:
+# class SingletonPiCamera(PiCamera,metaclass=Singleton):
+#     '''Redefines picamera as class as a singleton
 
-    def __init__(self,config=None):
-        self._picam = SingletonPiCamera()
-        if config is None:
-            config = camconfig.load()
-        self._config = config
+#     '''
 
-        self.resolution = config.get('CAMERA','resolution')
-        self.framerate = config.getfloat('CAMERA','framerate')
-        # TODO: led/flash
-        # TODO: effects options
-        self.hflip = config.getboolean('VIEW','hflip')
-        self.vflip = config.getboolean('VIEW','vflip')
-        self.rotation = config.getint('VIEW','rotation')
+#     def __init__(self):
+#         PiCamera.__init__(self)
+#         logging.debug(f"Camera initiated:{self}")
+
+
+def load_camera(config=None) -> PiCamera: 
+
+    picam = PiCamera()
+
+    if config is None:
+        config = camconfig.load()
+
+    picam.resolution = config.get('CAMERA','resolution')
+    picam.framerate = config.getfloat('CAMERA','framerate')
+    picam.hflip = config.getboolean('VIEW','hflip')
+    picam.vflip = config.getboolean('VIEW','vflip')
+    picam.rotation = config.getint('VIEW','rotation')
+
+    # TODO: led/flash
+    # TODO: effects options
+
+    return picam
+
+
+# class BaseCamera:
+
+#     def __init__(self, picam:PiCamera=None, config=None):
+
+#         if picam is None:
+#             self.picam = load_camera(config)
+
+#         if config is None:
+#             config = camconfig.load()
+
+
+class VideoRecorder:
+    '''Recorder for video
+
+    '''
+
+    fmt = 'h264'
+    recording = False
+
+    def __init__(self, picam:PiCamera, splitter_port:int=1,
+                 outpath:str=os.curdir):
+
+        self.picam = picam
+        self.port = splitter_port
+        self.path = outpath
 
     @property
-    def resolution(self):
-        return self._picam.resolution
-
-    @resolution.setter
-    def resolution(self, val):
-        if not self._picam.recording:
-            self._picam.resolution = val
-
-    @property
-    def framerate(self):
-        return self._picam.framerate
-
-    @framerate.setter
-    def framerate(self, val):
-        if not self._picam.recording:
-            self._picam.framerate = val
-
-    @property
-    def hflip(self):
-        return self._picam.hflip
-
-    @hflip.setter
-    def hflip(self, val):
-        self._picam.hflip = val
-
-    @property
-    def vflip(self):
-        return self._picam.vflip
-
-    @vflip.setter
-    def vflip(self, val):
-        self._picam.vflip = val
-
-    @property
-    def rotation(self):
-        return self._picam.rotation
-
-    @rotation.setter
-    def rotation(self, val):
-        self._picam.rotation = val
-        
-            
-
-class VideoRecorder(BaseCamera):
+    def output(self):
+        os.path.join(self.path,timestamp()+'.'+self.fmt)
 
     def start(self):
-        pass
+        self.picam.start_recording(self.output, splitter_port=self.port)
+        self.recording = True
+        logging.debug(f"Recording to {self.output}")
+
+    def split(self):
+        self.picam.split_recording(self.output, splitter_port=self.port)
+        self.recording = True
+
+    def toggle(self):
+        if self.recording:
+            self.stop()
+        else:
+            self.start()            
 
     def stop(self):
-        pass
+        self.picam.split_recording(splitter_port=self.port)
+        self.recording = True
+        logging.debug("Stopping recording")
 
+        
 
-class StillCamera(BaseCamera):
+class StillCamera:
+    ''' Simple camera for taking photos
+
+    '''
+
+    fmt = 'jpeg'
+
+    def __init__(self, picam:PiCamera, splitter_port:int=1,
+                 outpath:str=os.curdir):
+        self.picam = picam
+        self.port = splitter_port
+        self.path = outpath
+
+    @property
+    def output(self):
+        os.path.join(self.path,timestamp()+'.'+self.fmt)
 
     def capture(self):
-        pass
+        logging.debug(f"Capturing to {self.output}")
+        self.picam.capture(self.output, use_video_port=True,
+                           splitter_port=self.port)
+
 
 
 class TimelapseRecorder(StillCamera):
@@ -130,9 +150,8 @@ class TimelapseRecorder(StillCamera):
         pass    
     
 
-class VideoStreamer(VideoRecorder):
-    # TODO: move to web stream
-    pass
+     
+
 
 if __name__=='__main__':
     logging.basicConfig(format='%(levelname)s: %(message)s',
