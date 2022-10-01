@@ -36,7 +36,7 @@ def make_camera(picam:PiCamera, config:ConfigParser=None) -> StillCamera:
 
     '''
     logging.debug("Setting up still camera")
-    outpath = config.get('STILLCAM',outpath)
+    outpath = config.get('STILLCAM','outpath')
     return StillCamera(picam, splitter_port=1, outpath=outpath)
 
 
@@ -46,7 +46,7 @@ def make_recorder(picam:PiCamera, config:ConfigParser=None) -> VideoRecorder:
     '''
     logging.debug("Seting up recorder")
     outpath = config.get('RECORDER', 'outpath')
-    recorder = VideoRecorder(picam, splitter_port=1, outpath=outpath)
+    return VideoRecorder(picam, splitter_port=1, outpath=outpath)
     
 
 def make_app(picam:PiCamera, config:ConfigParser=None) -> Flask:
@@ -67,7 +67,7 @@ def make_app(picam:PiCamera, config:ConfigParser=None) -> Flask:
 
     stillcam = make_camera(picam, config)
     recorder = make_recorder(picam, config)
-    streamer = make_stream(picam, config)
+    streamer = make_streamer(picam, config)
     streamer.start()
 
     # Lights
@@ -78,7 +78,7 @@ def make_app(picam:PiCamera, config:ConfigParser=None) -> Flask:
 
     @app.route('/')
     def index():
-        return render_template('index.html',wsport=wsport)
+        return render_template('index.html',wsport=streamer.port)
 
     @app.route('/stream/')
     def stream_only():
@@ -94,10 +94,10 @@ def make_app(picam:PiCamera, config:ConfigParser=None) -> Flask:
         recorder.toggle()
         return redirect('/')
 
-    @app.route('/stream_toggle/', methods=['POST'])
-    def stream_toggle():
-        streamer.toggle()
-        return redirect('/')
+    # @app.route('/stream_toggle/', methods=['POST'])
+    # def stream_toggle():
+    #     streamer.toggle()
+    #     return redirect('/')
 
     @app.route('/lights_toggle/', methods=['POST'])
     def lights_toggle():
@@ -111,8 +111,9 @@ if __name__ == "__main__":
                     level=logging.DEBUG)
 
     logging.debug("Reading config file")
-    config = camconfig.load(conf)
+    config = camconfig.load()
 
+    from camera import load_camera
     logging.info('Initializing camera')
     picam = load_camera(config)
                              

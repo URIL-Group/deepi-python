@@ -93,7 +93,7 @@ class VideoRecorder:
 
     @property
     def output(self):
-        os.path.join(self.path,timestamp()+'.'+self.fmt)
+        return os.path.join(self.path,timestamp()+'.'+self.fmt)
 
     def start(self):
         self.picam.start_recording(self.output, splitter_port=self.port)
@@ -101,6 +101,7 @@ class VideoRecorder:
         logging.debug(f"Recording to {self.output}")
 
     def split(self):
+        logging.debug(f"Splitting recording to {self.output}")
         self.picam.split_recording(self.output, splitter_port=self.port)
         self.recording = True
 
@@ -111,7 +112,7 @@ class VideoRecorder:
             self.start()            
 
     def stop(self):
-        self.picam.split_recording(splitter_port=self.port)
+        self.picam.stop_recording(splitter_port=self.port)
         self.recording = True
         logging.debug("Stopping recording")
 
@@ -132,7 +133,7 @@ class StillCamera:
 
     @property
     def output(self):
-        os.path.join(self.path,timestamp()+'.'+self.fmt)
+        return os.path.join(self.path,timestamp()+'.'+self.fmt)
 
     def capture(self):
         logging.debug(f"Capturing to {self.output}")

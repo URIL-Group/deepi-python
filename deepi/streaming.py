@@ -22,6 +22,8 @@ from ws4py.server.wsgirefserver import ( WSGIServer,
                                         )
 from ws4py.server.wsgiutils import WebSocketWSGIApplication
 
+WebSocketWSGIHandler.http_version = '1.1'
+
 def make_websocket_server(output,port):
     '''Factory function for websocket server'''
 
@@ -110,21 +112,35 @@ class WebSocketStream:
 
     def __init__(self,picam, ws_port, resolution=None, splitter_port=2):
 
-        self.port = splitter_port
+        self.picam = picam
+        self.splitter_port = splitter_port
+        self.port = ws_port
 
         if resolution is None:
             resolution = picam.resolution
         self._resolution = resolution
 
         logging.debug(f"Streaming resolution: {resolution}")
-        logging.debug(f"Streaming splitter_port: {spitter_port}")
-        logging.debug(f"Streaming websocket port: {ws_port}")
+        logging.debug(f"Streaming splitter_port: {splitter_port}")
+        logging.debug(f"Streaming websocket port: {self.port}")
 
+        self.output = None
+        self.ws_server = None
+        self.ws_thread = None
+        self.broadcast_thread = None
 
-        WebSocketWSGIHandler.http_version = '1.1'
-        
-        self.output = BroadcastOutput(resolution,picam.framerate)
-        self.ws_server = make_websocket_server(self.output, ws_port)
+    @property
+    def resolution(self):
+        return self._resolution
+
+    def shutdown(self):
+        self.stop()
+
+    def start(self):
+        logging.debug("Opening websocket")
+        self.output = BroadcastOutput(self._resolution,
+                                      self.picam.framerate)
+        self.ws_server = make_websocket_server(self.output, self.port)
         self.ws_thread = Thread(target=self.ws_server.serve_forever)
         self.broadcast_thread = BroadcastThread(self.output.converter,
                                                 self.ws_server)
@@ -132,23 +148,21 @@ class WebSocketStream:
         self.ws_thread.start()
         self.broadcast_thread.start()
 
-    @property
-    def resolution(self):
-        return self._resolution
+        logging.debug("Starting websocket stream")
+        self.picam.start_recording(self.output, 'yuv',
+                                   resize=self._resolution,
+                                   splitter_port=self.splitter_port)
+        self.streaming = True
 
-    def shutdown(self):
+    def stop(self):
+        logging.debug("Stopping websocket stream")
+        self.picam.stop_recording(splitter_port=self.splitter_port)
+        self.streaming = False
+
         logging.debug("Shutting down stream")
         self.ws_server.shutdown()
         self.ws_thread.join()
         self.broadcast_thread.stop()
-
-    def start(self):
-        logging.debug("Starting websocket stream")
-        self.picam.start_recording(self.output, 'yuv', spitter_port=self.port)
-
-    def stop(self):
-        logging.debug("Stopping websocket stream")
-        self.picam.stop_recording(splitter_port=self.port)
 
     def toggle(self):
         if self.streaming:
