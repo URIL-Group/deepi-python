@@ -1,12 +1,14 @@
 #! /usr/bin/env python
-'''Wrapper for the PiCamera class that automates some portions for the DEEPi
+'''Wrapper for the PiCamera class that automates portions for DEEPi
 
 '''
 
 import logging
 import os
+from pathlib import Path
 from time import sleep
 from datetime import datetime
+from threading import Thread, Event
 
 from picamera import PiCamera
 
@@ -41,25 +43,6 @@ def timestamp():
 #     def __init__(self):
 #         PiCamera.__init__(self)
 #         logging.debug(f"Camera initiated:{self}")
-
-
-def load_camera(config=None) -> PiCamera: 
-
-    picam = PiCamera()
-
-    if config is None:
-        config = camconfig.load()
-
-    picam.resolution = config.get('CAMERA','resolution')
-    picam.framerate = config.getfloat('CAMERA','framerate')
-    picam.hflip = config.getboolean('VIEW','hflip')
-    picam.vflip = config.getboolean('VIEW','vflip')
-    picam.rotation = config.getint('VIEW','rotation')
-
-    # TODO: led/flash
-    # TODO: effects options
-
-    return picam
 
 
 # class BaseCamera:
@@ -127,40 +110,59 @@ class StillCamera:
         self.picam = picam
         self.port = splitter_port
         self.path = outpath
+        self.timelapse = None
 
     @property
     def output(self):
         return os.path.join(self.path,timestamp()+'.'+self.fmt)
 
     def capture(self):
-        logging.debug(f"Capturing to {self.output}")
+        logging.info(f"Capturing to {self.output}")
         self.picam.capture(self.output, use_video_port=True,
                            splitter_port=self.port)
 
+    def start_timelapse(self,interval:int=600):
+        self.timelapse = TimelapseThread(self.picam, interval)
+        self.timelapse.start()
+
+    def stop_timelapse(self):
+        self.timelapse.stop()
+        self.timelapse.join()
 
 
-class TimelapseRecorder(StillCamera):
+class TimelapseThread(Thread):
+    '''Timelapse thread
 
-    def start(self):
-        pass
+    '''
 
+    def __init__(self,camera:StillCamera, interval:int):
+        self.cam = camera
+        self.interval = interval
+
+        self.running = True
+        self.stopper = Event()
+
+        logging.info("Starting timelapse")
+        Thread.__init__(self)
+
+    def run(self):
+        while self.running:
+            self.cam.capture()
+            self.stopper.wait(self.interval)
+        
     def stop(self):
-        pass    
-    
-
+        self.running = False
+        self.stopper.set()
      
 
-
 if __name__=='__main__':
-    import camconfig
-
     logging.basicConfig(format='%(levelname)s: %(message)s',
                         level=logging.DEBUG)
 
-    cam1 = BaseCamera()
-    cam2 = VideoRecorder()
-    cam3 = StillCamera()
+    from time import sleep
 
-    logging.debug(f"Camera 1: {cam1._picam}")
-    logging.debug(f"Camera 2: {cam2._picam}")
-    logging.debug(f"Camera 3: {cam3._picam}")
+    picam = PiCamera()
+    cam = StillCamera(picam)
+    cam.start_timelapse(5)
+    sleep(60)
+    cam.stop_timelapse()

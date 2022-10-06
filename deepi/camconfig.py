@@ -7,6 +7,8 @@ import os
 from configparser import ConfigParser
 import logging
 
+from picamera import PiCamera
+
 def load_config(config_loc:str=None) -> ConfigParser:
     '''Load camera config files
 
@@ -49,11 +51,28 @@ def load_config(config_loc:str=None) -> ConfigParser:
         config.read(config_loc)
 
     return config
-    
+
+def load_camera(config:ConfigParser=None) -> PiCamera: 
+
+    picam = PiCamera()
+
+    if config is None:
+        config = camconfig.load()
+
+    picam.resolution = config.get('CAMERA','resolution')
+    picam.framerate = config.getfloat('CAMERA','framerate')
+    picam.hflip = config.getboolean('VIEW','hflip')
+    picam.vflip = config.getboolean('VIEW','vflip')
+    picam.rotation = config.getint('VIEW','rotation')
+
+    # TODO: led/flash
+    # TODO: effects options
+
+    return picam
+
 
 
 if __name__=='__main__':
-    
     '''Test loading the default'''
 
     logging.basicConfig(format='%(levelname)s: %(message)s',
@@ -67,3 +86,5 @@ if __name__=='__main__':
         print(f"======== {section_name} ===============")
         for sec_key, sec_val in config.items(section_name):
             print("{:20s} - {}".format(sec_key, sec_val))
+
+    picam = load_camera(config)
