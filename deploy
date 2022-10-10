@@ -3,26 +3,63 @@
 
 '''
 
-import logging
+import logging, sys
+from datetime import datetime
+from pathlib import Path
+
 from deepi import load_config, load_camera
 from deepi import make_camera, make_recorder, make_streamer, make_app, Lights
 # from deepi import WebSocketStream, VideoRecorder, StillCamera, Lights
 
-logging.basicConfig(format='%(levelname)s: %(message)s',
-                    level=logging.DEBUG)
-
 # Config
 logging.debug("Reading config file")
 config = load_config()
+
+# Logging
+log_path  = Path(config.get('ALL', 'logpath'))
+log_path.mkdir(parents=True, exist_ok=True)
+log_file  = (log_path / datetime.now().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
+
+config_log_level = config.get('ALL', 'loglevel').upper()
+if config_log_level=='CRITICAL':
+    log_level = logging.CRITICAL
+elif config_log_level=='ERROR':
+    log_level = logging.ERROR
+elif config_log_level=='WARNING':
+    log_level = logging.WARNING
+elif config_log_level=='INFO':
+    log_level = logging.INFO
+elif config_log_level=='DEBUG':
+    log_level = logging.DEBUG
+elif config_log_level=='NOTSET':
+    log_level = logging.NOTSET
+else:
+    logging.warning("log level does not match")
+
+logging.root.handlers = []
+logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
+                    level=log_level,
+                    handlers=[
+                        logging.FileHandler(log_file),
+                        logging.StreamHandler(sys.stdout)
+                    ]
+                    )
+
 
 # Set up camera
 logging.info('Initializing camera')
 picam = load_camera(config)
 
 # Set up cameras
-stillcam = make_camera(picam, config)
+stillcam = make_camera(  picam, config)
+
 recorder = make_recorder(picam, config)
-streamer = make_streamer(picam, config)
+if config.getboolean('RECORDER','recording'):
+    logging.info("Starting recording")
+    recorder.start()
+
+if config.getboolean('STREAM','streaming'):
+    streamer = make_streamer(picam, config)
 
 # Lights
 logging.debug("Starting lights")
@@ -30,5 +67,6 @@ pin_num = config.getint('LIGHTS', 'gpio')
 lights = Lights(pin_num)
 
 # Generate app
-app = make_app(stillcam, recorder, streamer, lights)
-app.run(host='0.0.0.0',port=5000,debug=False)
+if config.getboolean('WEBAPP','webapp'):
+    app = make_app(stillcam, recorder, streamer, lights)
+    app.run(host='0.0.0.0',port=5000,debug=False)

@@ -21,41 +21,6 @@ def timestamp():
     '''
     return datetime.now().strftime('%Y%m%dT%H%M%S')
 
-# class Singleton(type):
-#     '''Singleton metaclass to ensure camera cannot be opened twice
-
-#     '''
-#     _instances = {}
-#     def __call__(cls, *args, **kwargs):
-#         if cls not in cls._instances:
-#             cls._instances[cls] = super(Singleton,
-#                                         cls).__call__(*args, **kwargs)
-#         else:
-#             # cls._instances[cls].__init__(*args, **kwargs)
-#             logging.warning("Camera already open! Returning previous instance")
-#         return cls._instances[cls]
-
-# class SingletonPiCamera(PiCamera,metaclass=Singleton):
-#     '''Redefines picamera as class as a singleton
-
-#     '''
-
-#     def __init__(self):
-#         PiCamera.__init__(self)
-#         logging.debug(f"Camera initiated:{self}")
-
-
-# class BaseCamera:
-
-#     def __init__(self, picam:PiCamera=None, config=None):
-
-#         if picam is None:
-#             self.picam = load_camera(config)
-
-#         if config is None:
-#             config = camconfig.load()
-
-
 class VideoRecorder:
     '''Recorder for video
 
@@ -78,10 +43,13 @@ class VideoRecorder:
     def start(self):
         self.picam.start_recording(self.output, splitter_port=self.port)
         self.recording = True
-        logging.debug(f"Recording to {self.output}")
+        logging.info(f"Recording to {self.output}")
+
+    def wait(self, interval):
+        self.wait_recording(interval, splitter_port=self.port)
 
     def split(self):
-        logging.debug(f"Splitting recording to {self.output}")
+        logging.info(f"Splitting recording to {self.output}")
         self.picam.split_recording(self.output, splitter_port=self.port)
         self.recording = True
 
@@ -92,11 +60,38 @@ class VideoRecorder:
             self.start()            
 
     def stop(self):
-        self.picam.stop_recording(splitter_port=self.port)
-        self.recording = True
-        logging.debug("Stopping recording")
+        if self.recording:
+            logging.info("Stopping recording")
+            self.picam.stop_recording(splitter_port=self.port)
+            self.recording = False
+        else:
+            logging.debug("Recording already stopped")
 
+
+class RecorderThread:
+    '''Thread to keep video going
+
+    '''
+
+    def __init__(self, recorder:VideoRecorder, interval:int):
+        self.rec = recorder
+        self.interval = interval
+
+        self.running = True
+        Thread.__init__(self)
+        self.start()
+
+    def run(self):
+        while self.running and self.recording:
+            rec.wait(self.interval)
+            rec.split()
+
+    def stop(self):
+        rec.stop()
+        self.running = False
+        self.join()
         
+
 
 class StillCamera:
     ''' Simple camera for taking photos
@@ -153,6 +148,7 @@ class TimelapseThread(Thread):
     def stop(self):
         self.running = False
         self.stopper.set()
+        self.join()
      
 
 if __name__=='__main__':

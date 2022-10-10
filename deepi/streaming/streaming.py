@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+""" Module for streaming
+
+Based largely on https://github.com/waveform80/pistreaming
+
+"""
 
 import sys
 import io

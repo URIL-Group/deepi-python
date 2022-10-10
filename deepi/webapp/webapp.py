@@ -14,8 +14,8 @@ import logging
 
 from picamera.mmalobj import to_resolution # in case config not using tuple
 
-from .streaming import WebSocketStream
-from .camera import VideoRecorder, StillCamera
+from ..streaming import WebSocketStream
+from ..camera import VideoRecorder, StillCamera
 
 
 def make_streamer(picam:PiCamera, config:ConfigParser=None):
@@ -77,7 +77,11 @@ def make_app(stillcam, recorder, streamer, lights):
 
     @app.route('/capture/', methods=['POST'])
     def capture():
-        stillcam.capture()
+        try:
+            stillcam.capture()
+        except:
+            logging.info("Captured failed")
+            pass
         return redirect('/')    
 
     @app.route('/record_toggle/', methods=['POST'])
@@ -106,10 +110,8 @@ if __name__ == "__main__":
 
     logging.debug("Reading config file")
     config = camconfig.load_config()
-
-    from camera import load_camera
     logging.info('Initializing camera')
-    picam = load_camera(config)
+    picam = camconfig.load_camera(config)
 
     # Set up cameras
     stillcam = make_camera(picam, config)
