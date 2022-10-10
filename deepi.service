@@ -1,13 +1,9 @@
 [Unit]
 Description=DEEPi Service
-After=network.target
 
 [Service]
-User=pi
-Group=www-data
 WorkingDirectory=/home/pi/deepi-python
-Environment="PATH=/home/pi/deepi-python/venv/bin"
-ExecStart=/home/pi/pistreamingapp/venv/bin/gunicorn --workers 1 --bind unix:/home/pi/pistreamingapp/pistreaming.sock -m 007 wsgi:app
+ExecStart=/home/pi/deepi-python/deploy
 
 [Install]
 WantedBy=multi-user.target
