@@ -1,0 +1,10 @@
+[Unit]
+Description=DEEPi Service
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/deepi-python
+ExecStart=/home/pi/deepi-python/deploy
+
+[Install]
+WantedBy=multi-user.target
