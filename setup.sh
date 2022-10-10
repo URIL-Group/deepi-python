@@ -33,11 +33,15 @@ sudo apt-get -y install python3-picamera
 sudo apt-get install python3-pip
 python -m pip install --upgrade pip setuptools wheel build
 
-# TODO: Downlaod DEEPi-Python module
-# git clone git@github.com:URIL-Group/deepi-python.git
-# python -m build 
-python -m pip install ws4py flask
+# Install python requirements
+sudo apt-get install rpi.gpio
+python -m pip install RPi.GPIO
+python -m pip install ws4py flask pyyaml
+python -m pip install picamera
 
 # Set up deployment service
-
-
+sudo cp deepi.service /usr/lib/systemd/system/deepi.service
+sudo systemctl daemon-reload 
+sudo systemctl start deepi.service
+sudo systemctl enable deepi.service
+sudo systemctl status deepi.service
