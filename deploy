@@ -9,7 +9,6 @@ from pathlib import Path
 
 from deepi import load_config, load_camera
 from deepi import make_camera, make_recorder, make_streamer, make_app, Lights
-# from deepi import WebSocketStream, VideoRecorder, StillCamera, Lights
 
 # Config
 logging.debug("Reading config file")
