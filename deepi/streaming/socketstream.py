@@ -2,6 +2,7 @@ import io
 import socket
 import struct
 import time
+import logging
 import picamera
 
 class SplitFrames:
@@ -33,7 +34,7 @@ class SocketStreamer:
         self.s = socket.socket()
         self.s.bind(('0.0.0.0',port))
         self.s.listen(0)
-        print("Ready to connect")
+        logging.info("Ready to connect")
         # Accept a single connection and make a file-like object out of it
         self.conn = self.s.accept()[0].makefile('wb')
         self.output = SplitFrames(self.conn)
@@ -53,15 +54,17 @@ class SocketStreamer:
 
 if __name__=='__main__':
 
-    picam = picamera.PiCamera(resolution='HD', framerate=30)
-    time.sleep(2)
+    logging.basicConfig(format='%(levelname)s: %(message)s',level=logging.DEBUG)
 
-    feed = SocketStreamer(picam,8000)
-    start = time.time()
-    feed.start()
-    picam.wait_recording(10)
-    feed.stop()
-    
-    finish = time.time()
-    print(f'Sent {feed.output.count} images in {finish-start:.1f} seconds')
-    print(f'{feed.output.count/(finish-start):.1f}ffps')
+    with picamera.PiCamera(resolution='HD', framerate=30) as picam:
+        time.sleep(2)
+
+        feed = SocketStreamer(picam,8000)
+        start = time.time()
+        feed.start()
+        picam.wait_recording(10)
+        feed.stop()
+        
+        finish = time.time()
+        logging.info(f'Sent {feed.output.count} images in {finish-start:.1f} seconds')
+        logging.info(f'{feed.output.count/(finish-start):.1f}ffps')

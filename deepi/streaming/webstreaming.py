@@ -216,7 +216,7 @@ class StreamingHttpServer(HTTPServer):
             tpl = Template(f.read())
             self.index_content = tpl.safe_substitute(dict(
                 WS_PORT=ws_port))
-        with io.open('jsmpg.js', 'r') as f:
+        with io.open('../webapp/static/js/jsmpg.js', 'r') as f:
             self.jsmpg_content = f.read()
 
 
@@ -244,9 +244,10 @@ if __name__ == '__main__':
                                    resolution=streaming_resolution,
                                    splitter_port=2)
 
+        streamer.start()
         logging.info('Starting recording')
-        camera.start_recording(streamer.output, 'yuv', splitter_port=2,
-                               resize=streaming_resolution)
+        # camera.start_recording(streamer.output, 'yuv', splitter_port=2,
+        #                        resize=streaming_resolution)
         try:
 
             while True:
