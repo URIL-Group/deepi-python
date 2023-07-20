@@ -58,6 +58,10 @@ class BroadcastOutput:
 
     def __init__(self, resolution, framerate):
 
+        if resolution==(1920,1080):
+            logging.warning("Modifying streaming resolution to (1920x1088)")
+            resolution = (1920,1088)
+
         self.resolution = resolution
             
         logging.info('Spawning background conversion process')

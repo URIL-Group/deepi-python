@@ -49,6 +49,7 @@ def load_config(config_loc:str=None) -> ConfigParser:
         logging.debug(f"Reading config file: {config_loc}")
         # TODO: check if it exists
         config.read(config_loc)
+    
 
     return config
 

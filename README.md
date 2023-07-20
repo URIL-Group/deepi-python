@@ -9,7 +9,7 @@ run the set up script.
 
 ```
 sudo apt-get -y install git
-git clone https://github.com:URIL-Group/deepi-setup.git
+git clone https://github.com/URIL-Group/deepi-setup.git
 cd deepi-setup/
 sh setup.sh
 ```
