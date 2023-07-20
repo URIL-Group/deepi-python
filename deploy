@@ -19,6 +19,11 @@ log_path  = Path(config.get('ALL', 'logpath'))
 log_path.mkdir(parents=True, exist_ok=True)
 log_file  = (log_path / datetime.now().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
+# Make sure other folders exist
+for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
+    save_path  = Path(config.get(sec, 'outpath'))
+    save_path.mkdir(parents=True, exist_ok=True)
+
 config_log_level = config.get('ALL', 'loglevel').upper()
 if config_log_level=='CRITICAL':
     log_level = logging.CRITICAL
