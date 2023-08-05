@@ -65,14 +65,14 @@ class SocketStreamer:
 
 
 from threading import Thread
-class SocketStreamingThread:
+class SocketStreamingThread(Thread):
 
     def __init__(self, picam:PiCamera, port=8000, splitter_port=2):
         self.port = port
         self.picam = picam
         self.splitter_port = splitter_port
         Thread.__init__(self)
-        self.start()
+        Thread.start(self)
 
     def run(self):
         logging.debug("Started socket streaming thread")
@@ -117,7 +117,7 @@ if __name__=='__main__':
     picam  = PiCamera(resolution=resolution, framerate=framerate)
     time.sleep(2) # warm up camera
 
-    loggin.info(f"Starting socket streaming thread on port {port}")
+    logging.info(f"Starting socket streaming thread on port {port}")
     socket_streaming_thread = SocketStreamingThread(picam, port, splitter_port = 2)
     
     logging.debug("Node script ended")
