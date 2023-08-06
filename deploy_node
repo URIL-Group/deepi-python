@@ -13,14 +13,14 @@ from deepi import VideoRecorder, SocketStreamer
 from deepi import RecorderThread, SocketStreamingThread
 
 # Config
-logpath = /home/pi/log/
+logpath = Path("/home/pi/log/")
 loglevel = logging.DEBUG
 logpath.mkdir(parents=True, exist_ok=True)
 log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
 logging.root.handlers = []
 logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
-                    level=loglevel
+                    level=loglevel,
                     handlers=[logging.FileHandler(log_file),
                               logging.StreamHandler(sys.stdout)
                               ]
