@@ -47,7 +47,7 @@ class VideoRecorder:
         logging.info(f"Recording to {self.output}")
 
     def wait(self, interval):
-        self.wait_recording(interval, splitter_port=self.port)
+        self.picam.wait_recording(interval, splitter_port=self.port)
 
     def split(self):
         logging.info(f"Splitting recording to {self.output}")
@@ -69,26 +69,29 @@ class VideoRecorder:
             logging.debug("Recording already stopped")
 
 
-class RecorderThread:
+class RecorderThread(Thread):
     '''Thread to keep video going
 
     '''
 
-    def __init__(self, recorder:VideoRecorder, interval:int):
+    def __init__(self, recorder:VideoRecorder, interval):
         self.rec = recorder
         self.interval = interval
 
-        self.running = True
+        self.running = False
         Thread.__init__(self)
-        self.start()
+        #Thread.start(self)
 
     def run(self):
-        while self.running and self.recording:
-            rec.wait(self.interval)
-            rec.split()
+        logging.debug("Recorder thread starting")
+        self.rec.start()
+        self.running = True
+        while self.running and self.rec.recording:
+            self.rec.wait(self.interval)
+            self.rec.split()
 
     def stop(self):
-        rec.stop()
+        self.rec.stop()
         self.running = False
         self.join()
         

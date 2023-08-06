@@ -21,11 +21,6 @@ log_path  = Path(config.get('ALL', 'logpath'))
 log_path.mkdir(parents=True, exist_ok=True)
 log_file  = (log_path / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
-# Make sure other folders exist
-for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
-    save_path  = Path(config.get(sec, 'outpath'))
-    save_path.mkdir(parents=True, exist_ok=True)
-
 config_log_level = config.get('ALL', 'loglevel').upper()
 if config_log_level=='CRITICAL':
     log_level = logging.CRITICAL
@@ -51,17 +46,25 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
                     ]
                     )
 
+# Make sure other folders exist
+for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
+    save_path  = Path(config.get(sec, 'outpath'))
+    logging.debug(f"Ensuring directory exists: {save_path}")
+    save_path.mkdir(parents=True, exist_ok=True)
+
+
+
 
 # Set up camera
 logging.info('Initializing camera')
 picam = load_camera(config)
 
-logging.info("Set up recorder thread"
+logging.info("Set up recorder thread")
 recorder = VideoRecorder(picam, splitter_port=1, outpath=config.get('RECORDER','outpath'))
-recorder_thread = RecorderThread(recorder, interval=config.get('RECORDER','split'))
+recorder_thread = RecorderThread(recorder, interval=config.getint('RECORDER','split'))
 if config.getboolean('RECORDER','recording'):
     logging.info("Starting recording")
-    recorder.start()
+    recorder_thread.start()
 
 logging.info("Set up socket streaming thread")
 socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)

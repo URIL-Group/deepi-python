@@ -90,7 +90,7 @@ class SocketStreamingThread(Thread):
 
                 finish = time.time()
                 try:
-                    self.picam.stop_recording(splitter_port=splitter_port)
+                    self.picam.stop_recording(splitter_port=self.splitter_port)
                 except BrokenPipeError:
                     pass
 
