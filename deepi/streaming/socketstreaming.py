@@ -84,15 +84,18 @@ class SocketStreamingThread(Thread):
                 start = time.time()
                 try:
                     while True:
-                        self.picam.wait_recording(video_split_period, splitter_port=self.splitter_port)
+                        self.picam.wait_recording(5, splitter_port=self.splitter_port)
                 except Exception as e:
-                    pass
+                    logging.debug(f"Error on wait_recording: {e}")
 
                 finish = time.time()
                 try:
                     self.picam.stop_recording(splitter_port=self.splitter_port)
                 except BrokenPipeError:
                     pass
+                except Exception as e:
+                    logging.debug(f"Error on stop_recording: {e}")
+                                  
 
             logging.debug("Lost connection or closed")
             logging.info(f'Sent {output.count} frames in {finish-start:.1f} seconds '\
