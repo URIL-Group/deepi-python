@@ -69,7 +69,7 @@ class VideoRecorder:
             logging.debug("Recording already stopped")
 
 
-class RecorderThread:
+class RecorderThread(Thread):
     '''Thread to keep video going
 
     '''
