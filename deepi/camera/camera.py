@@ -19,14 +19,15 @@ def timestamp():
     '''Return a simple timestamp for saving fies
 
     '''
-    return datetime.now().strftime('%Y%m%dT%H%M%S')
+    #return datetime.now().strftime('%Y%m%dT%H%M%S')
+    return datetime.utcnow().isoformat()
 
 class VideoRecorder:
     '''Recorder for video
 
     '''
 
-    fmt = 'h264'
+    fmt = 'mjpeg'
     recording = False
 
     def __init__(self, picam:PiCamera, splitter_port:int=1,

@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-'''Deployment script for standard DEEPi
+'''Deployment script for node in deepi-array
 
 '''
 
@@ -8,7 +8,9 @@ from datetime import datetime
 from pathlib import Path
 
 from deepi import load_config, load_camera
-from deepi import make_camera, make_recorder, make_web_streamer, make_app, Lights
+#from deepi import make_recorder, make_socket_streamer
+from deepi import VideoRecorder, SocketStreamer
+from deepi import RecorderThread, SocketStreamingThread
 
 # Config
 logging.debug("Reading config file")
@@ -17,7 +19,7 @@ config = load_config()
 # Logging
 log_path  = Path(config.get('ALL', 'logpath'))
 log_path.mkdir(parents=True, exist_ok=True)
-log_file  = (log_path / datetime.utcow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
+log_file  = (log_path / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
 # Make sure other folders exist
 for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
@@ -54,23 +56,14 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
 logging.info('Initializing camera')
 picam = load_camera(config)
 
-# Set up cameras
-stillcam = make_camera(  picam, config)
-
-recorder = make_recorder(picam, config)
+logging.info("Set up recorder thread"
+recorder = VideoRecorder(picam, splitter_port=1, outpath=config.get('RECORDER','outpath'))
+recorder_thread = RecorderThread(recorder, interval=config.get('RECORDER','split'))
 if config.getboolean('RECORDER','recording'):
     logging.info("Starting recording")
     recorder.start()
 
-if config.getboolean('STREAM','streaming'):
-    streamer = make_web_streamer(picam, config)
+logging.info("Set up socket streaming thread")
+socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
 
-# Lights
-logging.debug("Starting lights")
-pin_num = config.getint('LIGHTS', 'gpio')
-lights = Lights(pin_num)
-
-# Generate app
-if config.getboolean('WEBAPP','webapp'):
-    app = make_app(stillcam, recorder, streamer, lights)
-    app.run(host='0.0.0.0',port=5000,debug=False)
+logging.info("All set, it should be a never ending loop now.")

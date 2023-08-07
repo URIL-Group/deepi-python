@@ -18,7 +18,7 @@ from ..streaming import WebSocketStream
 from ..camera import VideoRecorder, StillCamera
 
 
-def make_streamer(picam:PiCamera, config:ConfigParser=None):
+def make_web_streamer(picam:PiCamera, config:ConfigParser=None):
     '''Generate streamer using config
 
     '''
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # Set up cameras
     stillcam = make_camera(picam, config)
     recorder = make_recorder(picam, config)
-    streamer = make_streamer(picam, config)
+    streamer = make_web_streamer(picam, config)
 
     # Lights
     logging.debug("Starting lights")
