@@ -27,15 +27,15 @@ class VideoRecorder:
 
     '''
 
-    fmt = 'mjpeg'
-    recording = False
 
     def __init__(self, picam:PiCamera, splitter_port:int=1,
-                 outpath:str=os.curdir):
+                 outpath:str=os.curdir, fmt='h264'):
 
+        self.recording = False
         self.picam = picam
         self.port = splitter_port
         self.path = outpath
+        self.fmt = fmt
 
     @property
     def output(self):
@@ -69,7 +69,7 @@ class VideoRecorder:
             logging.debug("Recording already stopped")
 
 
-class RecorderThread(Thread):
+class RecorderThread:
     '''Thread to keep video going
 
     '''
