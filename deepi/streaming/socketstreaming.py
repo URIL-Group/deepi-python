@@ -2,7 +2,7 @@ import io
 import socket
 import struct
 import time
-import picamera
+from picamera import PiCamera
 import logging
 
 class SplitFrames:
@@ -64,39 +64,60 @@ class SocketStreamer:
         self.sock.close()
 
 
+from threading import Thread
+class SocketStreamingThread:
+
+    def __init__(self, picam:PiCamera, port=8000, splitter_port=2):
+        self.port = port
+        self.picam = picam
+        self.splitter_port = splitter_port
+        Thread.__init__(self)
+        self.start()
+
+    def run(self):
+        logging.debug("Started socket streaming thread")
+        while True:
+            with  SocketStreamer(8000) as output:
+                    
+                self.picam.start_recording(output, format='mjpeg', 
+                                           splitter_port=self.splitter_port)
+                start = time.time()
+                try:
+                    while True:
+                        self.picam.wait_recording(video_split_period, splitter_port=self.splitter_port)
+                except Exception as e:
+                    pass
+
+                finish = time.time()
+                try:
+                    self.picam.stop_recording(splitter_port=splitter_port)
+                except BrokenPipeError:
+                    pass
+
+            logging.debug("Lost connection or closed")
+            logging.info(f'Sent {output.count} frames in {finish-start:.1f} seconds '\
+                        f'({output.count/(finish-start):.1f}fps)')
+            time.sleep(1)        
+        logging.debug("Restarting socket streamer")
+
+
 
 if __name__=='__main__':
 
     resolution = '1080p'
     framerate = 24
     video_split_period = 10*60
+    port = 8000
+    splitter_port = 2
 
     # resolution = (1920,1080)
     # framerate = 60
+    logging.basicConfig(format='%(levelname)s: %(message)s',level=logging.DEBUG)
 
+    picam  = PiCamera(resolution=resolution, framerate=framerate)
+    time.sleep(2) # warm up camera
 
-    while True:
-        with  SocketStreamer(8000) as output:
-            with picamera.PiCamera(resolution=resolution, framerate=framerate) as picam:
-                time.sleep(2)
-
-                picam.start_recording(output, format='mjpeg', splitter_port=1)
-                start = time.time()
-                try:
-                    while True:
-                        picam.wait_recording(vidoe_split_period)
-                except Exception as e:
-                    pass
-
-                finish = time.time()
-                try:
-                    picam.stop_recording()
-                except BrokenPipeError:
-                    pass
-
-            logging.info(f'Sent {output.count} frames in {finish-start:.1f} seconds '\
-                         f'({output.count/(finish-start):.1f}fps)')
-            time.sleep(1)
-                
-        #ctrl.close()
+    loggin.info(f"Starting socket streaming thread on port {port}")
+    socket_streaming_thread = SocketStreamingThread(picam, port, splitter_port = 2)
+    
     logging.debug("Node script ended")
