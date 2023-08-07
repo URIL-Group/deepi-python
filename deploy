@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-'''Deployment script for standard DEEPi
+'''Deployment script for node in deepi-array
 
 '''
 
@@ -8,69 +8,49 @@ from datetime import datetime
 from pathlib import Path
 
 from deepi import load_config, load_camera
-from deepi import make_camera, make_recorder, make_web_streamer, make_app, Lights
+#from deepi import make_recorder, make_socket_streamer
+from deepi import VideoRecorder, SocketStreamer
+from deepi import RecorderThread, SocketStreamingThread
 
 # Config
+logpath = Path("/home/pi/log/")
+loglevel = logging.DEBUG
+logpath.mkdir(parents=True, exist_ok=True)
+log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
+
+logging.root.handlers = []
+logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
+                    level=loglevel,
+                    handlers=[logging.FileHandler(log_file),
+                              logging.StreamHandler(sys.stdout)
+                              ]
+                    )
+
 logging.debug("Reading config file")
 config = load_config()
 
-# Logging
-log_path  = Path(config.get('ALL', 'logpath'))
-log_path.mkdir(parents=True, exist_ok=True)
-log_file  = (log_path / datetime.utcow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
 # Make sure other folders exist
 for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
     save_path  = Path(config.get(sec, 'outpath'))
+    logging.debug(f"Ensuring directory exists: {save_path}")
     save_path.mkdir(parents=True, exist_ok=True)
 
-config_log_level = config.get('ALL', 'loglevel').upper()
-if config_log_level=='CRITICAL':
-    log_level = logging.CRITICAL
-elif config_log_level=='ERROR':
-    log_level = logging.ERROR
-elif config_log_level=='WARNING':
-    log_level = logging.WARNING
-elif config_log_level=='INFO':
-    log_level = logging.INFO
-elif config_log_level=='DEBUG':
-    log_level = logging.DEBUG
-elif config_log_level=='NOTSET':
-    log_level = logging.NOTSET
-else:
-    logging.warning("log level does not match")
 
-logging.root.handlers = []
-logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
-                    level=log_level,
-                    handlers=[
-                        logging.FileHandler(log_file),
-                        logging.StreamHandler(sys.stdout)
-                    ]
-                    )
 
 
 # Set up camera
 logging.info('Initializing camera')
 picam = load_camera(config)
 
-# Set up cameras
-stillcam = make_camera(  picam, config)
+# logging.info("Set up recorder thread")
+# recorder = VideoRecorder(picam, splitter_port=1, outpath=config.get('RECORDER','outpath'))
+# recorder_thread = RecorderThread(recorder, interval=config.getint('RECORDER','split'))
+# if config.getboolean('RECORDER','recording'):
+#     logging.info("Starting recording")
+#     recorder_thread.start()
 
-recorder = make_recorder(picam, config)
-if config.getboolean('RECORDER','recording'):
-    logging.info("Starting recording")
-    recorder.start()
+logging.info("Set up socket streaming thread")
+socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
 
-if config.getboolean('STREAM','streaming'):
-    streamer = make_web_streamer(picam, config)
-
-# Lights
-logging.debug("Starting lights")
-pin_num = config.getint('LIGHTS', 'gpio')
-lights = Lights(pin_num)
-
-# Generate app
-if config.getboolean('WEBAPP','webapp'):
-    app = make_app(stillcam, recorder, streamer, lights)
-    app.run(host='0.0.0.0',port=5000,debug=False)
+logging.info("All set, it should be a never ending loop now.")
