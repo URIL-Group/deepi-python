@@ -13,38 +13,22 @@ from deepi import VideoRecorder, SocketStreamer
 from deepi import RecorderThread, SocketStreamingThread
 
 # Config
-logging.debug("Reading config file")
-config = load_config()
-
-# Logging
-log_path  = Path(config.get('ALL', 'logpath'))
-log_path.mkdir(parents=True, exist_ok=True)
-log_file  = (log_path / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
-
-config_log_level = config.get('ALL', 'loglevel').upper()
-if config_log_level=='CRITICAL':
-    log_level = logging.CRITICAL
-elif config_log_level=='ERROR':
-    log_level = logging.ERROR
-elif config_log_level=='WARNING':
-    log_level = logging.WARNING
-elif config_log_level=='INFO':
-    log_level = logging.INFO
-elif config_log_level=='DEBUG':
-    log_level = logging.DEBUG
-elif config_log_level=='NOTSET':
-    log_level = logging.NOTSET
-else:
-    logging.warning("log level does not match")
+logpath = /home/pi/log/
+loglevel = logging.DEBUG
+logpath.mkdir(parents=True, exist_ok=True)
+log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
 logging.root.handlers = []
 logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
-                    level=log_level,
-                    handlers=[
-                        logging.FileHandler(log_file),
-                        logging.StreamHandler(sys.stdout)
-                    ]
+                    level=loglevel
+                    handlers=[logging.FileHandler(log_file),
+                              logging.StreamHandler(sys.stdout)
+                              ]
                     )
+
+logging.debug("Reading config file")
+config = load_config()
+
 
 # Make sure other folders exist
 for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
