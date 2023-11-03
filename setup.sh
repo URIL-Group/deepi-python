@@ -13,7 +13,7 @@ sudo sh -c "echo 'gpu_mem=256' >> /boot/config.txt"
 
 # Update RPi
 sudo apt-get -y update
-sudo apt-get -y upgrade
+# sudo apt-get -y upgrade
 sudo apt-get -y autoremove
 
 # Install supporting packages
