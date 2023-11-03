@@ -23,6 +23,7 @@ sudo apt-get -y install ntp
 sudo apt-get -y install ffmpeg
 sudo apt-get -y install git
 sudo apt-get -y install nginx
+sudo apt-get -y install emacs-nox
 
 # Install Python
 sudo apt-get -y install python3-setuptools python3-dev build-essential libpq-dev

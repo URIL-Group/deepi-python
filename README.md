@@ -16,6 +16,11 @@ cd deepi-python/
 sh setup.sh
 ```
 
+Set up via `sudo raspi-config`
+
+1. Enable Legacy Camera
+2. Expand filesystem
+
 
 To set up a service run the following.
 ```
