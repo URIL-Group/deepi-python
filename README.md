@@ -7,7 +7,14 @@ Set up script and resources for a DEEPi easy install.
 To install everything, clone the project onto the RPi, and
 run the set up script.
 
-https://github.com/URIL-Group/deepi-setup.git
+
+```
+sudo apt-get -y update
+sudo apt-get -y install git
+git clone https://github.com/URIL-Group/deepi-setup.git
+cd deepi-setup/
+sh setup.sh
+```
 
 
 To set up a service run the following.

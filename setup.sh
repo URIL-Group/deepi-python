@@ -45,3 +45,5 @@ sudo systemctl daemon-reload
 sudo systemctl start deepi.service
 sudo systemctl enable deepi.service
 sudo systemctl status deepi.service
+
+cp deepi.conf ~/deepi.conf
