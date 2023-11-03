@@ -11,8 +11,8 @@ run the set up script.
 ```
 sudo apt-get -y update
 sudo apt-get -y install git
-git clone https://github.com/URIL-Group/deepi-setup.git
-cd deepi-setup/
+git clone https://github.com/URIL-Group/deepi-python.git
+cd deepi-python/
 sh setup.sh
 ```
 
