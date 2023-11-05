@@ -7,10 +7,12 @@ import logging, sys
 from datetime import datetime
 from pathlib import Path
 
-from deepi import load_config, load_camera
+from deepi import load_camera
+# from deepi import load_config
 #from deepi import make_recorder, make_socket_streamer
 from deepi import VideoRecorder, SocketStreamer
-from deepi import RecorderThread, SocketStreamingThread
+from deepi import RecorderThread
+# from deepi import SocketStreamingThread
 
 # Config
 logpath = Path("/home/pi/log/")
