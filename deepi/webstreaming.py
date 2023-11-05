@@ -14,6 +14,7 @@ from subprocess import Popen, PIPE
 from struct import Struct
 from threading import Thread
 from time import sleep, time
+from picamera import PiCamera
 
 from wsgiref.simple_server import make_server
 
