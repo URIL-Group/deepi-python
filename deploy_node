@@ -50,6 +50,9 @@ logging.info("Set up socket streaming thread")
 streaming_resolution = config.get('SOCKETSTREAM','resolution')
 streaming_port = config.get('SOCKETSTREAM','port')
 streaming_splitter = config.get('SOCKETSTREAM','splitter')
+logging.debug(f"Streaming splitter: {streaming_splitter}")
+streaming_splitter = 2
+
 # resolution = '1080p'
 # framerate = 24
 # video_split_period = 10*60
@@ -61,7 +64,7 @@ streaming_splitter = config.get('SOCKETSTREAM','splitter')
 logging.debug("Started socket streaming thread")
 while True:
     with  SocketStreamer(8000) as output:
-            
+        
         picam.start_recording(output, format='mjpeg', 
                                 splitter_port=streaming_splitter)
         start = time.time()
