@@ -14,8 +14,11 @@ from deepi import RecorderThread
 from deepi import DEEPiConfig
 
 # Config
-logpath = Path("/home/pi/log/")
-loglevel = logging.DEBUG
+logging.debug("Reading config file")
+config = DEEPiConfig('deepi.conf')
+logpath = config.get('ALL','logpath')
+loglevel = logging.DEBUG # TODO: get to work with config file
+
 logpath.mkdir(parents=True, exist_ok=True)
 log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
@@ -27,8 +30,7 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
                               ]
                     )
 
-logging.debug("Reading config file")
-config = DEEPiConfig()
+
 
 
 # Make sure other folders exist
