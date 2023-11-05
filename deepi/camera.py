@@ -15,6 +15,8 @@ from configparser import ConfigParser
 
 from picamera import PiCamera
 
+CAMERA_WARMUP_TIME = 2 # seconds
+
 # TODO: make sure these directories exist
 # TODO: put these in the config
 
@@ -186,6 +188,7 @@ def load_camera(config:ConfigParser=None) -> PiCamera:
 
     picam = PiCamera()
     # FIXME: possibly useful as global or as a class property
+    sleep(CAMERA_WARMUP_TIME)
 
     if config is None:
         config = DEEPiConfig()

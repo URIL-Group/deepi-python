@@ -56,7 +56,7 @@ streaming_splitter = config.get('SOCKETSTREAM','splitter')
 # port = 8000
 # splitter_port = 2
 
-time.sleep(2) # warm up camera
+# time.sleep(2) # warm up camera
 
 logging.debug("Started socket streaming thread")
 while True:
