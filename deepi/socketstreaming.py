@@ -12,6 +12,7 @@ class SocketOutput(typing.IO):
     def __init__(self, connection:socket.SocketIO):
         self.connection = connection
         self.stream:io.BytesIO = io.BytesIO()
+        self._count = 0
 
     def write(self, buf) -> None:
         '''Write to contents of `buf` to the the stream. If buf represents a new frame, the current contents of the stream are first written to the socket connection and then flushed along with a header.'''
@@ -20,6 +21,7 @@ class SocketOutput(typing.IO):
             # TODO: investigate jpeg frame formats
             # Start of new frame; send the old one's length
             # then the data
+            self._count = self._count+1
             size = self.stream.tell()
             if size > 0: # skip for empty frame (occurs at inital)
                 # Send frame header including size.
@@ -62,6 +64,10 @@ class SocketStreamer:
         logging.debug("Exiting streaming context")
         self.stop()
         self.close()
+
+    @property
+    def _count(self):
+        return self.output._count
 
     def stop(self):
         try:
@@ -115,8 +121,9 @@ if __name__=='__main__':
                                 
 
         logging.debug("Lost connection or closed")
-        logging.info(f'Sent {output._count} frames in {finish-start:.1f} seconds '\
-                    f'({output._count/(finish-start):.1f}fps)')
+        logging.info(f'Sent {output._count} frames ' +
+                     f'in {finish-start:.1f} seconds ' +
+                     f'({output._count/(finish-start):.1f}fps)')
         time.sleep(1)        
     logging.debug("Restarting socket streamer")
 
