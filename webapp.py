@@ -55,8 +55,9 @@ def make_app(stillcam, recorder, streamer, lights):
     streamer.start()
     lights.on()    
 
-    template_dir = os.path.join(os.path.dirname(__file__),'templates')
-    static_dir   = os.path.join(os.path.dirname(__file__),'static')
+    webapp_path = os.path.join(os.path.dirname(__file__),'deepi','webapp')
+    template_dir = os.path.join(webapp_path,'templates')
+    static_dir   = os.path.join(webapp_path,'static')
 
     # template_dir = os.path.abspath('templates/')
     # static_dir   = os.path.abspath('static/')
