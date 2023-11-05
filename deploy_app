@@ -10,7 +10,7 @@ from pathlib import Path
 from deepi import DEEPiConfig, load_camera
 # from deepi import make_camera, make_recorder, make_web_streamer, make_app
 
-from deepi import PWMLightController
+from deepi import PWMLightController as LightController
 
 # Config
 logging.debug("Reading config file")
@@ -70,7 +70,7 @@ if config.getboolean('STREAM','streaming'):
 # Lights
 logging.debug("Starting lights")
 pin_num = config.getint('LIGHTS', 'gpio')
-lights = PWMLightController(pin_num)
+lights = LightController(pin_num)
 
 # Generate app
 if config.getboolean('WEBAPP','webapp'):

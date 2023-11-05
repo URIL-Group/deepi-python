@@ -102,16 +102,23 @@ def make_app(stillcam, recorder, streamer, lights):
     return app
 
 if __name__ == "__main__":
-    import camconfig
-    from lights import Lights
+    from deepi import DEEPiConfig
+    from deepi import load_camera
+    from deepi import PWMLightController as LightController
+
+
+    # Config
+    logging.debug("Reading config file")
+    config = DEEPiConfig()
+    logpath = Path(config.get('ALL','logpath'))
+    loglevel = logging.DEBUG # TODO: get to work with config file
 
     logging.basicConfig(format='%(levelname)s: %(message)s',
                     level=logging.DEBUG)
 
     logging.debug("Reading config file")
-    config = camconfig.load_config()
     logging.info('Initializing camera')
-    picam = camconfig.load_camera(config)
+    picam = load_camera(config)
 
     # Set up cameras
     stillcam = make_camera(picam, config)
@@ -121,7 +128,7 @@ if __name__ == "__main__":
     # Lights
     logging.debug("Starting lights")
     pin_num = config.getint('LIGHTS', 'gpio')
-    lights = Lights(pin_num)
+    lights = LightController(pin_num)
 
     # Generate app
     app = make_app(stillcam, recorder, streamer, lights)
