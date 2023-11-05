@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+
+start
+:Power on;
+:RPi OS Boot Sequence;
+fork
+:Load HTTP service;
+fork again
+:Load SSH service;
+fork again
+:Load FTP service;
+end fork
+if (DEEPi Service enabled) then (false)
+
+else (true)
+:Load DEEPi service;
+
+
+switch (script?)
+case (webapp)
+    :Load camera config;
+    :Load recorder;
+    if (Start recording) then (true)
+        :Start recording;
+    else (false)
+    endif
+    :Load timelapse;
+    if (Start timelapse) then (true)
+        :Start timelapse;
+    else (false)
+    endif
+    :Load websocket stream;
+    :Load webapp;
+
+case (array_node)
+    :Load camera config;
+    :Load recoder;
+    :Start recording;
+    :Load socket stream;
+    :Start streaming;
+endswitch
+endif
+end
+@enduml
+

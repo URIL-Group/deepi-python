@@ -1,0 +1,76 @@
+@startuml
+' !theme plain
+
+' "Developers" as dev
+' "User" as user
+
+' () sphinx
+
+package "Software Repository" as repo {
+    package "deepi-python" as deepipy {
+        [camera]
+        [lights]
+        [socket]
+        [websocket]
+    }
+    package "Executables" as bin {
+        [webapp]
+        [socket-node]
+    }
+    [setup.sh] as setup
+    [DEEPi.service] as service 
+    package "Documentation" as docs {
+
+    }
+    
+}
+
+service --> bin : <<executes>>   
+setup --> service : <<enables>>
+bin --> deepipy : <<impliments>>
+
+
+
+' dev --> repo : Develop,Test,Document
+
+package "RPi OS" as os {
+    package "Services" {
+        [NTP]
+        [FTP]
+        [SSH]
+        [HTTP]        
+    }
+    package "Utilities" {
+        [ffmpeg]
+        [systemctl] --> Services : <<manages>>
+        [systemctl] --> service : <<manages>>
+    }
+
+    [Python Dependencies] <-- deepipy : <<uses>>    
+    ' [Python Dependencies] <-- setup : <<installs>>    
+}
+
+    package "Hardware" {
+        [RPi Camera] <-- [camera] : <<manages>>
+        [RPi GPIO] --> [Lights] : <<controls>>
+        [RPi GPIO] <-- [lights] : <<manages>>
+    }
+
+' deepipy --> Hardware : <<manages>>
+setup --> os : <<configures>>
+' Utilities <-- setup : <<installs>>
+
+
+package "Collaboration" {
+    [git] <-- repo : version control
+    ' git <-- setup : version control
+    ' git <-- docs : version control
+    [GitHub] --> git : <<hosts>>
+    [ReadTheDocs] --> docs : <<hosts>>
+    [PiPy] --> deepipy : <<hosts>>
+}
+
+webapp --> HTTP : <<serve>>
+
+
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+' !theme plain
+!theme cerulean
+
+
+' actor User as user
+' collections Clients as clients 
+' participant DEEPi as deepi
+
+/' TODO: get rid of loop '/
+/' TODO: show processes spawning '/
+/' TODO: similar diagram for socket stream '/
+
+participant Camera as picam
+
+participant "SocketOutput" as output
+participant "SocketStreamer" as streamer
+participant "SocketClient" as client
+participant "Image Processer" as opencv
+participant "Frame Display" as display
+
+== Initialization Streaming Server ==
+
+activate streamer
+
+== Establish Client Connection ==
+
+client -> streamer : connect
+activate client
+streamer -> client : bind
+
+
+activate output
+picam -> output : Start recording
+activate picam
+
+== Socket Streaming ==
+
+activate opencv
+activate display
+
+loop Streaming Process
+picam -> output: Record data (JPEG)
+output -> streamer : Read buffer (JPEG)
+streamer -> client : Read buffer (JPEG)
+opencv -> client : Read frame (numpy.ndarray)
+opencv -> display : Display frame
+display -> display : waitKey(1)
+end loop
+
+@enduml

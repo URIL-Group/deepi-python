@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+skinparam actorStyle awesome
+"User" as user
+"Admin" as admin
+admin --> (Change settings)
+admin --> (Setup)
+(Setup) --> (SSH)
+(Change settings) --> (SSH)
+user --> (Transfer files)
+(Transfer files) --> (FTP)
+user --> (Modify configuration file)
+(Modify configuration file) --> (FTP)
+(Modify configuration file) --> (SSH)
+(Modify configuration file) --> (HTTP)
+user --> (View livestream)
+user --> (Control camera)
+(View livestream) --> (webapp)
+(Control camera) --> (webapp)
+(webapp) --> (HTTP)
+user --> (View documentation)
+(View documentation) --> (HTTP)
+@enduml

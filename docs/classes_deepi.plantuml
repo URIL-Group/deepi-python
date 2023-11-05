@@ -1,0 +1,114 @@
+@startuml classes_deepi
+set namespaceSeparator none
+class "BroadcastOutput" as deepi.webstreaming.BroadcastOutput {
+  converter : Popen
+  resolution : tuple[int, int]
+  flush()
+  write(buff)
+}
+class "BroadcastThread" as deepi.webstreaming.BroadcastThread {
+  converter : Popen
+  running : bool
+  server : WSGIServer
+  run()
+  stop()
+}
+class "DEEPiConfig" as deepi.camera.DEEPiConfig {
+  f : Optional[Path]
+}
+class "GPIOLightController" as deepi.lights.GPIOLightController {
+  pin_num : int
+  status : bool
+  off()
+  on()
+}
+class "LightController" as deepi.lights.LightController {
+  status : bool
+  off()
+  on()
+  toggle()
+}
+class "PWMLightController" as deepi.lights.PWMLightController {
+  duty_cycle
+  pin_num : int
+  pwm
+  off(val: float)
+  on(val: float)
+}
+class "RecorderThread" as deepi.camera.RecorderThread {
+  interval : int
+  rec
+  running : bool
+  run()
+  stop()
+}
+class "SocketOutput" as deepi.socketstreaming.SocketOutput {
+  connection : SocketIO
+  stream : BytesIO
+  flush()
+  write(buf) -> 
+}
+class "SocketStreamer" as deepi.socketstreaming.SocketStreamer {
+  connection : SocketIO
+  output
+  sock : socket
+  close()
+  stop()
+}
+class "StillCamera" as deepi.camera.StillCamera {
+  fmt : str
+  picam
+  save_dir : Path
+  splitter_port : int
+  timelapse : NoneType, Optional[Thread]
+  capture()
+  start_timelapse(interval: int)
+  stop_timelapse()
+}
+class "StreamingWebSocketHandler" as deepi.webstreaming.StreamingWebSocketHandler {
+  resolution : Optional[tuple[int, int]]
+  closed(code, reason)
+  opened()
+}
+class "TimelapseThread" as deepi.camera.TimelapseThread {
+  camera
+  interval : int
+  running : bool
+  stopper : Event
+  run()
+  stop()
+}
+class "VideoRecorder" as deepi.camera.VideoRecorder {
+  picam
+  recording : bool
+  save_dir : str
+  save_fmt : str
+  splitter_port : int
+  split()
+  start()
+  stop()
+  toggle()
+  wait(interval)
+}
+class "WebSocketStream" as deepi.webstreaming.WebSocketStream {
+  handler
+  output
+  picam : PiCamera
+  resolution
+  server : WSGIServer
+  thread
+  ws_port : int
+  shutdown()
+  stop()
+  toggle()
+}
+deepi.lights.GPIOLightController --|> deepi.lights.LightController
+deepi.lights.PWMLightController --|> deepi.lights.LightController
+deepi.camera.StillCamera --* deepi.camera.TimelapseThread : camera
+deepi.camera.TimelapseThread --* deepi.camera.StillCamera : timelapse
+deepi.camera.VideoRecorder --* deepi.camera.RecorderThread : rec
+deepi.socketstreaming.SocketOutput --* deepi.socketstreaming.SocketStreamer : output
+deepi.webstreaming.BroadcastOutput --* deepi.webstreaming.WebSocketStream : output
+deepi.webstreaming.BroadcastThread --* deepi.webstreaming.WebSocketStream : thread
+deepi.webstreaming.StreamingWebSocketHandler --* deepi.webstreaming.WebSocketStream : handler
+@enduml

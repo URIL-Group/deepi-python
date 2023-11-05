@@ -1,0 +1,52 @@
+@startuml classes_deepicamera
+set namespaceSeparator none
+class "DEEPiCamera" as deepicamera.DEEPiCamera {
+  recorder
+  streamer
+  streamer : Optional[Streamer]
+  timelapse
+  load_config(f: Path) -> 
+  save_config(f: Path) -> 
+}
+class "PiCamera" as deepicamera.PiCamera {
+  capture(output: Path)
+  start_recording(output: Path, splitter_port)
+  stop_recording(splitter_port)
+}
+class "Recorder" as deepicamera.Recorder {
+  splitter_port : int
+  start(output)
+  stop()
+}
+class "SocketOuput" as deepicamera.SocketOuput {
+  addr : str
+  port : int
+}
+class "SocketStreamer" as deepicamera.SocketStreamer {
+  output
+}
+class "Streamer" as deepicamera.Streamer {
+}
+class "TimelapseRecorder" as deepicamera.TimelapseRecorder {
+  start()
+}
+class "TimelapseThread" as deepicamera.TimelapseThread {
+}
+class "VideoRecorder" as deepicamera.VideoRecorder {
+  output
+  save_dir : Path
+}
+class "WebsocketStreamer" as deepicamera.WebsocketStreamer {
+}
+deepicamera.SocketStreamer --|> deepicamera.Streamer
+deepicamera.TimelapseRecorder --|> deepicamera.Recorder
+deepicamera.VideoRecorder --|> deepicamera.Recorder
+deepicamera.WebsocketStreamer --|> deepicamera.Streamer
+deepicamera.PiCamera --* deepicamera.DEEPiCamera : _picam
+deepicamera.PiCamera --* deepicamera.Recorder : _picam
+deepicamera.PiCamera --* deepicamera.SocketStreamer : _picam
+deepicamera.SocketOuput --* deepicamera.SocketStreamer : output
+deepicamera.Streamer --* deepicamera.DEEPiCamera : streamer
+deepicamera.TimelapseRecorder --* deepicamera.DEEPiCamera : timelapse
+deepicamera.VideoRecorder --* deepicamera.DEEPiCamera : recorder
+@enduml

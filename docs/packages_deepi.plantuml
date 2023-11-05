@@ -1,0 +1,19 @@
+@startuml packages_deepi
+set namespaceSeparator none
+package "deepi" as deepi {
+}
+package "deepi.camera" as deepi.camera {
+}
+package "deepi.lights" as deepi.lights {
+}
+package "deepi.socketstreaming" as deepi.socketstreaming {
+}
+package "deepi.webapp" as deepi.webapp {
+}
+package "deepi.webstreaming" as deepi.webstreaming {
+}
+deepi --> deepi.camera
+deepi --> deepi.lights
+deepi --> deepi.socketstreaming
+deepi --> deepi.webstreaming
+@enduml

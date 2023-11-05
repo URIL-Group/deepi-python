@@ -1,0 +1,65 @@
+@startuml
+!theme cerulean
+' !theme bluegray
+skinparam actorStyle awesome
+
+actor "User" as user
+' top to bottom direction
+' node client {
+    
+    node browser {
+        node html{
+            (canvas)
+            (button)
+        }
+        node javascript {
+            [jsmpeg]
+            [ws_client]
+            [cmd]
+            ' ws_client -> jsmpeg 
+            jsmpeg <-- ws_client
+        }
+
+        user --> button : <<clicks>>
+        ' user --> canvas : <<views>>
+        canvas <-- user : <<views>>
+        
+        jsmpeg --> canvas : <<displays>>
+        button --> cmd : <<sends>>
+
+    }
+' }
+
+node RPi {
+
+    node OS {
+        [ffmpeg]
+        [picamera]
+
+        picamera --> ffmpeg : <<records>>
+    }
+
+    node deepipy {
+        [ws_server]
+        [streamer]
+        [webserver]
+    }
+
+
+    ffmpeg -> streamer : <<streams>>
+    ' streamer --> ws_server : <<streams>>
+    ws_server <-- streamer : <<streams>>
+    webserver --> picamera : <<controls>>
+    webserver -> ws_server : <<spawns>>
+
+    ' streamer --> ffmpeg : <<spawns>>
+
+}
+
+cmd <--> webserver : request/response
+ws_server -> ws_client : <<broadcasts>>
+
+
+
+
+@enduml

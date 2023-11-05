@@ -1,0 +1,61 @@
+@startuml
+' !theme plain
+!theme cerulean
+
+' actor User as user
+' collections Clients as clients 
+' participant DEEPi as deepi
+
+/' TODO: get rid of loop '/
+/' TODO: show processes spawning '/
+/' TODO: similar diagram for socket stream '/
+
+participant Browser as browser
+participant JSMPEG as jsmpeg
+participant WebsocketClient as ws_client
+
+participant HTTPServer as http
+participant WebsocketServer as ws_server
+participant BroadcastOutput as broadcast
+participant FFMPEG as ffmpeg
+participant Camera as picam
+
+activate http
+activate ws_server
+
+== Initialization Streaming Server ==
+
+broadcast <- picam: Get streaming resolution
+broadcast -> ffmpeg: Spawn converter process
+activate ffmpeg
+activate broadcast
+picam -> ffmpeg : Start recording
+activate picam
+
+' ... wait for connection ...
+
+== Establish Client Connection ==
+
+activate browser
+browser -> http: GET /stream/
+http -> browser: serve webapp
+browser -> jsmpeg: Spawn JSMPEG process
+activate jsmpeg
+browser -> ws_client: Spawn Websocket client
+activate ws_client
+ws_client -> ws_server: Request connection
+broadcast -> ws_server: Send JPEG header
+ws_server -> ws_client: Broadcast JPEG header
+
+== Server-Client Streaming ==
+
+loop Streaming Process
+picam -> ffmpeg: Record data (raw)
+ffmpeg -> broadcast: Read buffer (JPEG)
+ws_server <- broadcast: Read buffer (JPEG)
+ws_server -> ws_client: Broadcast buffer (JPEG)
+ws_client -> jsmpeg: Read buffer (JPEG)
+jsmpeg -> browser: Display stream (JPEG)
+end loop
+
+@enduml

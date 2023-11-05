@@ -14,8 +14,8 @@ import logging
 
 from picamera.mmalobj import to_resolution # in case config not using tuple
 
-from ..streaming import WebSocketStream
-from ..camera import VideoRecorder, StillCamera
+from deepi.streaming import WebSocketStream
+from deepi.camera import VideoRecorder, StillCamera
 
 
 def make_web_streamer(picam:PiCamera, config:ConfigParser=None):

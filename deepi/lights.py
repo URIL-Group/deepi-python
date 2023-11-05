@@ -10,49 +10,96 @@ LED_PIN = 12
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-class Lights:
-    '''Class to control LED output through GPIO
-
+class LightController:
     '''
-
-    status = False
-
-    def __init__(self, pin=LED_PIN):
-        logging.debug(f"Initiaizing lights on pin {pin}.")
-        GPIO.setup(LED_PIN,GPIO.OUT)
-        self.pwm = GPIO.PWM(LED_PIN,1000)
-        self.pwm.start(0)
-        self.on()               # default is on in case no webapp
-
-    def set(self,duty_cycle):
-        # Set LED pwm between 0-100%
-        logging.debug(f"Set LED duty cycle: {duty_cycle}")
-        self.pwm.ChangeDutyCycle(duty_cycle)
+    Base class for controlling the lights. There can be multiple implimentations of this class which much impliment methods for `setup`, `on`, and `off`
+    '''
+    status:bool
+    def __init__(self, status:bool=True):
+        logging.debug(f"Initializing lights.")
+        if status:
+            self.on()
+        else:
+            self.off()
 
     def on(self):
-        # Set LED on
+        raise NotImplementedError
+    
+    def off(self):
+        raise NotImplementedError
+    
+    def toggle(self):
+        if self.status:
+            self.off()
+        else:
+            self.on()
+
+
+class GPIOLightController(LightController):
+    '''Light Controller using a GPIO input with high and low functionality'''
+
+    def __init__(self, pin_num:int=LED_PIN, status:bool=True):
+        self.pin_num = pin_num
+        GPIO.setup(self.pin_num, GPIO.OUT)
+        LightController.__init__(self, status=True)
+
+    def on(self):
+        logging.debug(f"Setting pin {self.pin_num} high.")
+        GPIO.output(self.pin_num, GPIO.HIGH)
         self.status = True
-        self.set(100)        
 
     def off(self):
-        # Set LED off
+        logging.debug(f"Setting pin {self.pin_num} low.")
+        GPIO.output(self.pin_num, GPIO.HIGH)
         self.status = False
-        self.set(0)        
-        
-    def toggle(self):
-        # Toggle LED between on and off
-        self.status = not self.status
-        self.set(100*self.status)
+
+
+class PWMLightController(LightController):
+    '''Controls the lights using a PWM. The PWM can be used as the input for a LED driver allowing for dimming of the LED. The `pwm_val` is a float between `0.0` and `100.0`. '''
+
+    def __init__(self, pin_num:int=LED_PIN, status:bool=True, 
+                 duty_cycle:float=100.0):
+        self.pin_num = pin_num
+        self._duty_cycle = duty_cycle
+        GPIO.setup(self.pin_num, GPIO.OUT)
+        self.pwm = GPIO.PWM(self.pin_num, self.duty_cycle)
+        self.pwm.start(self.duty_cycle)
+        LightController.__init__(self, status=True)
+
+    def on(self, val:float=None):
+        '''When turned on, the pwm is set to the previous value.'''
+        if val is not None:
+            self._duty_cycle = val
+        logging.debug(f"Setting pin {self.pin_num}"
+                      f"to pin pwm value {self.duty_cycle}")
+        self.pwm.ChangeDutyCycle(self.duty_cycle)
+
+    def off(self, val:float=0):
+        '''When turned on, the pwm is set to the previous value.'''
+        logging.debug(f"Setting pin {self.pin_num}"
+                      f"to pin pwm value {val}")
+        self.pwm.ChangeDutyCycle(val)
+
+    @property
+    def duty_cycle(self)->float:
+        return self._duty_cycle
+    
+    @duty_cycle.setter
+    def duty_cycle(self, val:float):
+        '''When the `duty_cycle` of the object is changed, the duty cycle of the pin is changed as well.'''
+        self._duty_cycle = val
+        self.pwm.ChangeDutyCycle(val)
 
 
 if __name__=='__main__':
     logging.basicConfig(format='%(levelname)s: %(message)s',
                     level=logging.DEBUG)
 
-    lights = Lights(12)
     from time import sleep
+
+    lights = PWMLightController(12)
 
     while True:
         for dc in range(100):
-            lights.set(dc)
+            lights.duty_cycle(dc)
             sleep(1)

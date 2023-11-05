@@ -1,0 +1,42 @@
+@startuml
+' !theme plain
+skinparam actorStyle awesome
+
+"Maintainer" as admin
+
+
+
+package "src Software" as src {   
+    [Python Package]
+    [Executables]
+    [Setup Script]
+    [Documentation]
+}
+cloud "Repository" as repo
+
+node "Contributors" {
+[Feature] as feature
+cloud "Forked Repository" as forked
+"Contributor" as dev
+
+}
+
+node "Deployment" {
+    "User" as user
+    [Hardware] as deepi 
+    () "Deep Sea" as field
+    repo -> deepi : clone
+    deepi -> field : deploy
+}
+
+admin -> repo : Design
+src -> repo : <<hosts>>
+repo <-> feature : branch/merge
+' feature -> repo : merge
+feature ..> forked : fork
+forked -> repo : pull
+
+
+
+
+@enduml
