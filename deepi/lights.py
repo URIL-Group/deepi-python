@@ -21,6 +21,7 @@ class LightController:
             self.on()
         else:
             self.off()
+        self.status = status
 
     def on(self):
         raise NotImplementedError
@@ -73,12 +74,14 @@ class PWMLightController(LightController):
         logging.debug(f"Setting pin {self.pin_num}"
                       f"to pin pwm value {self.duty_cycle}")
         self.pwm.ChangeDutyCycle(self.duty_cycle)
+        self.status = True
 
     def off(self, val:float=0):
         '''When turned on, the pwm is set to the previous value.'''
         logging.debug(f"Setting pin {self.pin_num}"
                       f"to pin pwm value {val}")
         self.pwm.ChangeDutyCycle(val)
+        self.status = False
 
     @property
     def duty_cycle(self)->float:
@@ -88,7 +91,7 @@ class PWMLightController(LightController):
     def duty_cycle(self, val:float):
         '''When the `duty_cycle` of the object is changed, the duty cycle of the pin is changed as well.'''
         self._duty_cycle = val
-        self.pwm.ChangeDutyCycle(val)
+
 
 
 if __name__=='__main__':
