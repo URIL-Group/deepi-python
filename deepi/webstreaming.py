@@ -162,7 +162,7 @@ class WebSocketStream:
                                       self.picam.framerate)
         
         app = WebSocketWSGIApplication( handler_cls=self.handler )
-        self.server = make_server('', port, server_class=WSGIServer,
+        self.server = make_server('', ws_port, server_class=WSGIServer,
                             handler_class=WebSocketWSGIRequestHandler,
                             app=app)
         self.server.initialize_websockets_manager()
