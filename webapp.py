@@ -105,6 +105,7 @@ if __name__ == "__main__":
     from deepi import DEEPiConfig
     from deepi import load_camera
     from deepi import PWMLightController as LightController
+    from pathlib import Path
 
 
     # Config
