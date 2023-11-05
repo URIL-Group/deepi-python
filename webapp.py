@@ -69,11 +69,11 @@ def make_app(stillcam, recorder, streamer, lights):
 
     @app.route('/')
     def index():
-        return render_template('index.html',wsport=streamer.port)
+        return render_template('index.html',wsport=streamer.ws_port)
 
     @app.route('/stream/')
     def stream_only():
-        return render_template('stream.html',wsport=streamer.port)
+        return render_template('stream.html',wsport=streamer.ws_port)
 
     @app.route('/capture/', methods=['POST'])
     def capture():
