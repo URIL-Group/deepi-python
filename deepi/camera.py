@@ -178,7 +178,7 @@ class DEEPiConfig(ConfigParser):
             self.read(loc)
             self.f:Path = loc
 
-        self.load()
+        # self.load()
 
 
 def load_camera(config:ConfigParser=None) -> PiCamera: 
