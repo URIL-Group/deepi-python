@@ -7,12 +7,14 @@ import logging, sys
 from datetime import datetime
 from pathlib import Path
 
-from deepi import load_config, load_camera
-from deepi import make_camera, make_recorder, make_web_streamer, make_app, Lights
+from deepi import DEEPiConfig, load_camera
+# from deepi import make_camera, make_recorder, make_web_streamer, make_app
+
+from deepi import PWMLightController
 
 # Config
 logging.debug("Reading config file")
-config = load_config()
+config = DEEPiConfig()
 
 # Logging
 log_path  = Path(config.get('ALL', 'logpath'))
@@ -68,7 +70,7 @@ if config.getboolean('STREAM','streaming'):
 # Lights
 logging.debug("Starting lights")
 pin_num = config.getint('LIGHTS', 'gpio')
-lights = Lights(pin_num)
+lights = PWMLightController(pin_num)
 
 # Generate app
 if config.getboolean('WEBAPP','webapp'):

@@ -187,7 +187,7 @@ def load_camera(config:ConfigParser=None) -> PiCamera:
     picam = PiCamera()
 
     if config is None:
-        config = camconfig.load()
+        config = DEEPiConfig()
 
     picam.resolution = config.get('CAMERA','resolution')
     picam.framerate = config.getfloat('CAMERA','framerate')

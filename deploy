@@ -12,6 +12,7 @@ from deepi import load_camera
 #from deepi import make_recorder, make_socket_streamer
 from deepi import VideoRecorder, SocketStreamer
 from deepi import RecorderThread
+from deepi import DEEPiConfig
 # from deepi import SocketStreamingThread
 
 # Config
@@ -29,7 +30,7 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
                     )
 
 logging.debug("Reading config file")
-config = load_config()
+config = DEEPiConfig()
 
 
 # Make sure other folders exist
@@ -37,8 +38,6 @@ for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
     save_path  = Path(config.get(sec, 'outpath'))
     logging.debug(f"Ensuring directory exists: {save_path}")
     save_path.mkdir(parents=True, exist_ok=True)
-
-
 
 
 # Set up camera
@@ -53,6 +52,6 @@ picam = load_camera(config)
 #     recorder_thread.start()
 
 logging.info("Set up socket streaming thread")
-socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
+# socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
 
 logging.info("All set, it should be a never ending loop now.")
