@@ -6,7 +6,7 @@
 import logging, sys
 from datetime import datetime
 from pathlib import Path
-from time import time
+import time
 
 from deepi import load_camera
 from deepi import VideoRecorder, SocketStreamer
