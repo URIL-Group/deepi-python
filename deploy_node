@@ -6,11 +6,12 @@
 import logging, sys
 from datetime import datetime
 from pathlib import Path
+from time import time
 
-from deepi import load_config, load_camera
-#from deepi import make_recorder, make_socket_streamer
+from deepi import load_camera
 from deepi import VideoRecorder, SocketStreamer
-from deepi import RecorderThread, SocketStreamingThread
+from deepi import RecorderThread
+from deepi import DEEPiConfig
 
 # Config
 logpath = Path("/home/pi/log/")
@@ -27,7 +28,7 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
                     )
 
 logging.debug("Reading config file")
-config = load_config()
+config = DEEPiConfig()
 
 
 # Make sure other folders exist
@@ -37,20 +38,48 @@ for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
     save_path.mkdir(parents=True, exist_ok=True)
 
 
-
-
 # Set up camera
 logging.info('Initializing camera')
 picam = load_camera(config)
 
-# logging.info("Set up recorder thread")
-# recorder = VideoRecorder(picam, splitter_port=1, outpath=config.get('RECORDER','outpath'))
-# recorder_thread = RecorderThread(recorder, interval=config.getint('RECORDER','split'))
-# if config.getboolean('RECORDER','recording'):
-#     logging.info("Starting recording")
-#     recorder_thread.start()
 
 logging.info("Set up socket streaming thread")
-socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
 
-logging.info("All set, it should be a never ending loop now.")
+streaming_resolution = config.get('SOCKETSTREAM','resolution')
+streaming_port = config.get('SOCKETSTREAM','port')
+streaming_splitter = config.get('SOCKETSTREAM','splitter')
+# resolution = '1080p'
+# framerate = 24
+# video_split_period = 10*60
+# port = 8000
+# splitter_port = 2
+
+time.sleep(2) # warm up camera
+
+logging.debug("Started socket streaming thread")
+while True:
+    with  SocketStreamer(8000) as output:
+            
+        picam.start_recording(output, format='mjpeg', 
+                                splitter_port=streaming_splitter)
+        start = time.time()
+        try:
+            while True:
+                picam.wait_recording(5, splitter_port=streaming_splitter)
+        except Exception as e:
+            logging.debug(f"Error on wait_recording: {e}")
+
+        finish = time.time()
+        try:
+            picam.stop_recording(splitter_port=streaming_splitter)
+        except BrokenPipeError:
+            pass
+        except Exception as e:
+            logging.debug(f"Error on stop_recording: {e}")
+                            
+
+    logging.debug("Lost connection or closed")
+    logging.info(f'Sent {output._count} frames in {finish-start:.1f} seconds '\
+                f'({output._count/(finish-start):.1f}fps)')
+    time.sleep(1)        
+logging.debug("Restarting socket streamer")

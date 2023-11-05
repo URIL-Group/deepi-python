@@ -185,6 +185,7 @@ def load_camera(config:ConfigParser=None) -> PiCamera:
     '''Load the Raspberry Pi camera and select settings'''
 
     picam = PiCamera()
+    # FIXME: possibly useful as global or as a class property
 
     if config is None:
         config = DEEPiConfig()
