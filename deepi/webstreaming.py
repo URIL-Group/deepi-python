@@ -169,6 +169,7 @@ class WebSocketStream:
         self._ws_thread = Thread(target=self.server.serve_forever)
         self.thread = BroadcastThread(self.output.converter, self.server)
 
+    def start(self):
         self._ws_thread.start()
         self.thread.start()        
         logging.debug("Starting websocket stream")
