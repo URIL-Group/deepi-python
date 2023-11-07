@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     logging.basicConfig(format='%(levelname)s: %(message)s',level=logging.DEBUG)
 
-    from deepi import WebSocketStream
+    from webstreaming import WebSocketStream
     from picamera import PiCamera as DEEPiCamera
 
     HTTP_PORT = 8080
