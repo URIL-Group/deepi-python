@@ -44,12 +44,15 @@ for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
 logging.info('Initializing camera')
 picam = load_camera(config)
 
-# logging.info("Set up recorder thread")
-# recorder = VideoRecorder(picam, splitter_port=1, outpath=config.get('RECORDER','outpath'))
-# recorder_thread = RecorderThread(recorder, interval=config.getint('RECORDER','split'))
-# if config.getboolean('RECORDER','recording'):
-#     logging.info("Starting recording")
-#     recorder_thread.start()
+logging.info("Set up recorder thread")
+recorder = VideoRecorder(picam, splitter_port=1, 
+                         outpath=config.get('RECORDER','outpath'))
+recorder_thread = RecorderThread(recorder, 
+                                 interval=config.getint('RECORDER','split'))
+
+if config.getboolean('RECORDER','recording'):
+    logging.info("Starting recording")
+    recorder_thread.start()
 
 logging.info("Set up socket streaming thread")
 # socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
