@@ -50,7 +50,7 @@ recorder = VideoRecorder(picam, splitter_port=1,
 recorder_thread = RecorderThread(recorder, 
                                  interval=config.getint('RECORDER','split'))
 
-if config.getboolean('RECORDER','recording'):
+if config.getboolean('RECORDER','autostart'):
     logging.info("Starting recording")
     recorder_thread.start()
 
