@@ -103,7 +103,7 @@ class StillCamera:
     ''' Simple camera for taking photos. It automatically creates captures with timestamped files of the specified format in the specified directory.
     '''
 
-    def __init__(self, picam:PiCamera, splitter_port:int=1,
+    def __init__(self, picam:PiCamera, splitter_port:int=0,
                  outpath:Path=os.curdir, fmt:str='jpeg'):
         self.picam:PiCamera = picam
         self.splitter_port = splitter_port
