@@ -127,7 +127,7 @@ class StillCamera:
         '''Spawns a timelapse thread and begins captures at a set interval using the settings from the base camera object. If the class already has a timelapse instance, the instance is stopped an a new one is created.'''
         if self.timelapse is not None:
             self.timelapse.stop()
-        self.timelapse = TimelapseThread(self.picam, interval)
+        self.timelapse = TimelapseThread(self, interval)
         self.timelapse.start()
 
     def stop_timelapse(self):
