@@ -42,11 +42,11 @@ class StreamingHttpServer(HTTPServer):
     def __init__(self,port=8082, ws_port=8084):
         addr = ('',port)
         HTTPServer.__init__(self, addr, StreamingHttpHandler)        
-        with io.open('index.html', 'r') as f:
+        with io.open('deepi/index.html', 'r') as f:
             tpl = Template(f.read())
             self.index_content = tpl.safe_substitute(dict(
                 WS_PORT=ws_port))
-        with io.open('./static/js/jsmpg.js', 'r') as f:
+        with io.open('deepi/jsmpg.js', 'r') as f:
             self.jsmpg_content = f.read()
 
             
