@@ -47,7 +47,7 @@ class StreamingHttpServer(HTTPServer):
             tpl = Template(f.read())
             self.index_content = tpl.safe_substitute(dict(
                 WS_PORT=ws_port))
-        with io.open('../webapp/static/js/jsmpg.js', 'r') as f:
+        with io.open('./static/js/jsmpg.js', 'r') as f:
             self.jsmpg_content = f.read()
 
             
