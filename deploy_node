@@ -9,9 +9,10 @@ from pathlib import Path
 import time
 
 from deepi import load_camera
-from deepi import VideoRecorder, SocketStreamer
+from deepi import VideoRecorder, SocketStreamer, StillCamera
 from deepi import RecorderThread
 from deepi import DEEPiConfig
+
 
 # Config
 logging.debug("Reading config file")
@@ -46,7 +47,6 @@ picam = load_camera(config)
 
 
 logging.info("Set up socket streaming thread")
-
 streaming_resolution = config.get('SOCKETSTREAM','resolution')
 streaming_port = config.get('SOCKETSTREAM','port')
 streaming_splitter = config.get('SOCKETSTREAM','splitter')
@@ -61,6 +61,18 @@ streaming_splitter = 2
 
 # time.sleep(2) # warm up camera
 
+logging.info("Setting up video recorder")
+recorder = VideoRecorder(picam, 
+                         splitter_port=config.getint('RECORDER','splitter'),
+                         outpath=config.get('RECORDER','outpath'),
+                         )
+
+logging.info("Setting up still camera")
+camera = StillCamera(picam, 
+                     splitter_port=config.getint('STILLCAM','splitter'), 
+                     outpath=config.get('STILLCAM','outpath')
+                     )
+
 logging.debug("Started socket streaming thread")
 while True:
     with  SocketStreamer(8000) as output:
@@ -68,6 +80,8 @@ while True:
         picam.start_recording(output, format='mjpeg', 
                                 splitter_port=streaming_splitter)
         start = time.time()
+        recorder.start()
+        camera.start_timelapse()
         try:
             while True:
                 picam.wait_recording(5, splitter_port=streaming_splitter)
@@ -81,7 +95,8 @@ while True:
             pass
         except Exception as e:
             logging.debug(f"Error on stop_recording: {e}")
-                            
+        recorder.stop()
+        camera.stop_timelapse()                            
 
     logging.debug("Lost connection or closed")
     logging.info(f'Sent {output._count} frames in {finish-start:.1f} seconds '\
