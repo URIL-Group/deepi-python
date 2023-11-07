@@ -32,7 +32,8 @@ class StreamingWebSocketHandler(WebSocket):
     
     Other than the initial opening behavior, the websocket operates the same as a normal websock.'''
     
-    resolution: tuple[int,int] = None
+    # resolution: tuple[int,int] = None
+    resolution = None # TODO: fix this later
 
     def __init__(self, sock, protocols=None, extensions=None, environ=None, heartbeat_freq=None):
         self.resolution: tuple[int,int] = StreamingWebSocketHandler.resolution
