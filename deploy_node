@@ -51,7 +51,9 @@ streaming_resolution = config.get('SOCKETSTREAM','resolution')
 streaming_port = config.get('SOCKETSTREAM','port')
 streaming_splitter = config.get('SOCKETSTREAM','splitter')
 logging.debug(f"Streaming splitter: {streaming_splitter}")
-streaming_splitter = 2
+timelapse_interval = config.get('TIMELAPSE','interval')
+
+
 
 # resolution = '1080p'
 # framerate = 24
@@ -81,7 +83,7 @@ while True:
                                 splitter_port=streaming_splitter)
         start = time.time()
         recorder.start()
-        camera.start_timelapse()
+        camera.start_timelapse(timelapse_interval)
         try:
             while True:
                 picam.wait_recording(5, splitter_port=streaming_splitter)

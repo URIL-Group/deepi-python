@@ -145,16 +145,16 @@ class TimelapseThread(Thread):
     '''
 
     def __init__(self,camera:StillCamera, interval:int):
+        logging.debug("Initializing timelapse")
         self.camera:StillCamera = camera
         self.interval = interval
 
         self.running = True
         self.stopper = Event()
-
-        logging.info("Starting timelapse")
         Thread.__init__(self)
 
     def run(self):
+        logging.debug(f"Starting timelapse ({self.interval} sec)")
         while self.running:
             self.camera.capture()
             self.stopper.wait(self.interval)
