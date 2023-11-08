@@ -179,7 +179,7 @@ class WebSocketStream:
         self._streaming = True
 
     @property
-    def resolution(self) -> tuple[int,...]:
+    def resolution(self):
         return self._resolution
 
     def shutdown(self):
