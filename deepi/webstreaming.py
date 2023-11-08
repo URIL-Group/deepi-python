@@ -32,11 +32,10 @@ class StreamingWebSocketHandler(WebSocket):
     
     Other than the initial opening behavior, the websocket operates the same as a normal websock.'''
     
-    resolution: tuple[int, ...] = None
-    # resolution = None # TODO: fix this later
+    resolution = None
 
     def __init__(self, sock, protocols=None, extensions=None, environ=None, heartbeat_freq=None):
-        self.resolution: tuple[int, ...] = StreamingWebSocketHandler.resolution
+        self.resolution = StreamingWebSocketHandler.resolution
         assert self.resolution is not None, "Must set resolution class attribute before initializing."
         # FIXME: currently, the resolution cannot be defined in the constructor because the class itself is passed rather than an instance of the class. Instances are spawned later as connections are established. Multiple connections may be established at the same time.
         WebSocket.__init__(self, sock, protocols=None, extensions=None, environ=None, heartbeat_freq=None)
@@ -57,7 +56,7 @@ class StreamingWebSocketHandler(WebSocket):
 class BroadcastOutput:
     '''File-like object that converts video when recorded to. The object is a wrapper for a the spawned `ffmpeg` converter process. The converter is spawned in the background and uses a pipe for the input and output. The converter converts input from raw yuv video to mpeg video'''
 
-    def __init__(self, resolution:tuple[int,...], framerate:int):
+    def __init__(self, resolution, framerate:int):
 
         if resolution==(1920,1080):
             logging.warning("Modifying streaming resolution to (1920x1088)")
@@ -138,7 +137,7 @@ class WebSocketStream:
     # FIXME: this class is likely excessively complicated. I just took eeverything from the main function and added to this class. 
 
     def __init__(self,picam:PiCamera, ws_port:int, 
-                 resolution:tuple[int,...]=None, splitter_port:int=2):
+                 resolution=None, splitter_port:int=2):
 
         # FIXME: picam should probably be a private attribute since it should not be manipulated directly
         self.picam = picam
@@ -147,7 +146,7 @@ class WebSocketStream:
 
         if resolution is None:
             resolution = picam.resolution
-        self._resolution:tuple[int,...] = resolution
+        self._resolution = resolution
         # FIXME: check for valid resolutions before settings
 
         logging.debug(f"Streaming resolution: {resolution}")
