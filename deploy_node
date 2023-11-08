@@ -48,10 +48,10 @@ picam = load_camera(config)
 
 logging.info("Set up socket streaming thread")
 streaming_resolution = config.get('SOCKETSTREAM','resolution')
-streaming_port = config.get('SOCKETSTREAM','port')
-streaming_splitter = config.get('SOCKETSTREAM','splitter')
+streaming_port = config.getint('SOCKETSTREAM','port')
+streaming_splitter = config.getint('SOCKETSTREAM','splitter')
 logging.debug(f"Streaming splitter: {streaming_splitter}")
-timelapse_interval = config.get('TIMELAPSE','interval')
+timelapse_interval = config.getint('TIMELAPSE','interval')
 
 
 
