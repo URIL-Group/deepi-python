@@ -35,7 +35,7 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
 
 
 # Make sure other folders exist
-for sec in ['STILLCAM', 'RECORDER', 'TIMELAPSE']:
+for sec in ['STILLCAM', 'RECORDER']:
     save_path  = Path(config.get(sec, 'outpath'))
     logging.debug(f"Ensuring directory exists: {save_path}")
     save_path.mkdir(parents=True, exist_ok=True)
