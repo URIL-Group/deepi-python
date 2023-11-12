@@ -19,7 +19,7 @@ CAMERA_WARMUP_TIME = 2 # seconds
 MINIMUM_SPACE = 10e9 # 1 GB
 # A full 10 min video is around 1.28 GB
 # TODO: move minimum space to the config
-MINIMUM_SPACE = 1000000e9
+
 
 def timestamp() -> str:
     '''Return a simple timestamp for saving files
