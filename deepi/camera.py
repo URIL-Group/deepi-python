@@ -19,6 +19,7 @@ CAMERA_WARMUP_TIME = 2 # seconds
 MINIMUM_SPACE = 10e9 # 1 GB
 # A full 10 min video is around 1.28 GB
 # TODO: move minimum space to the config
+MINIMUM_SPACE = 1000000e9
 
 def timestamp() -> str:
     '''Return a simple timestamp for saving files
@@ -172,7 +173,7 @@ class TimelapseThread(Thread):
 
     def run(self):
         logging.debug(f"Starting timelapse ({self.interval} sec)")
-        while self.running and space_available>MINIMUM_SPACE:
+        while self.running and space_available()>MINIMUM_SPACE:
             self.camera.capture()
             self.stopper.wait(self.interval)
         self.stop()
@@ -180,7 +181,7 @@ class TimelapseThread(Thread):
     def stop(self):
         self.running = False
         self.stopper.set()
-        self.join()
+        # self.join()
      
 # TODO: CameraConfig should be a class 
 class DEEPiConfig(ConfigParser):

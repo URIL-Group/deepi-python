@@ -65,7 +65,7 @@ if config.getboolean('TIMELAPSE','autostart'):
     logging.info("Starting timelapse")
     camera.start_timelapse(interval=config.getint('TIMELAPSE','interval'))
 
-logging.info("Set up socket streaming thread")
+# logging.info("Set up socket streaming thread")
 # socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
 
 logging.info("All set, it should be a never ending loop now.")

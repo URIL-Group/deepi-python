@@ -16,7 +16,7 @@ from deepi import DEEPiConfig
 
 # Config
 logging.debug("Reading config file")
-config = DEEPiConfig('deepi.conf')
+config = DEEPiConfig('node.conf')
 logpath = Path(config.get('ALL','logpath'))
 loglevel = logging.DEBUG # TODO: get to work with config file
 
