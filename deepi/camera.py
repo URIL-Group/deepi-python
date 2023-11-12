@@ -16,15 +16,24 @@ from configparser import ConfigParser
 from picamera import PiCamera
 
 CAMERA_WARMUP_TIME = 2 # seconds
-
-# TODO: make sure these directories exist
-# TODO: put these in the config
+MINIMUM_SPACE = 10e9 # 1 GB
+# A full 10 min video is around 1.28 GB
+# TODO: move minimum space to the config
 
 def timestamp() -> str:
     '''Return a simple timestamp for saving files
     '''
     #return datetime.now().strftime('%Y%m%dT%H%M%S')
     return datetime.utcnow().isoformat()
+
+import os
+def space_available(dir='./'):
+    s = os.statvfs(dir)
+    remaining_space = s.f_frsize*s.f_bavail
+    logging.debug(f"Remaining space: {remaining_space/1e9} GB")
+    return remaining_space
+
+
 
 class VideoRecorder:
     '''Recorder for video
@@ -45,6 +54,10 @@ class VideoRecorder:
 
     def start(self):
         '''Create an output file and start recording to it. The output file depends on the format used by the recorder and save directory'''
+        if space_available() < MINIMUM_SPACE:
+            logging.error("Out of space. No recording started")
+            self.stop()
+            return
         self.picam.start_recording(self._output, splitter_port=self.splitter_port)
         self.recording = True
         logging.info(f"Recording to {self._output}")
@@ -54,6 +67,10 @@ class VideoRecorder:
 
     def split(self):
         logging.info(f"Splitting recording to {self._output}")
+        if space_available() < MINIMUM_SPACE:
+            logging.error("Out of space, stopping recorder instead of spliting")
+            self.stop()
+            return        
         self.picam.split_recording(self._output, splitter_port=self.splitter_port)
         self.recording = True
 
@@ -155,9 +172,10 @@ class TimelapseThread(Thread):
 
     def run(self):
         logging.debug(f"Starting timelapse ({self.interval} sec)")
-        while self.running:
+        while self.running and space_available>MINIMUM_SPACE:
             self.camera.capture()
             self.stopper.wait(self.interval)
+        self.stop()
         
     def stop(self):
         self.running = False
