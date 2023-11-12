@@ -19,7 +19,7 @@ from deepi import DEEPiConfig
 
 # Config
 logpath = Path("/home/pi/log/")
-loglevel = logging.DEBUG
+loglevel = logging.INFO
 logpath.mkdir(parents=True, exist_ok=True)
 log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 

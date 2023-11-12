@@ -34,7 +34,7 @@ def space_available(dir='./'):
     logging.debug(f"Remaining space: {remaining_space/1e9} GB")
     return remaining_space
 
-
+logging.info(f"Space Available: {space_available:.2f}")
 
 class VideoRecorder:
     '''Recorder for video
