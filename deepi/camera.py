@@ -17,6 +17,9 @@ from picamera import PiCamera
 
 CAMERA_WARMUP_TIME = 2 # seconds
 MINIMUM_SPACE = 10e9 # 1 GB
+
+from platform import node
+HOSTNAME = node()
 # A full 10 min video is around 1.28 GB
 # TODO: move minimum space to the config
 
@@ -51,7 +54,7 @@ class VideoRecorder:
 
     @property
     def _output(self):
-        return os.path.join(self.save_dir,timestamp()+'.'+self.save_fmt)
+        return os.path.join(self.save_dir,timestamp()+HOSTNAME+'.'+self.save_fmt)
 
     def start(self):
         '''Create an output file and start recording to it. The output file depends on the format used by the recorder and save directory'''
@@ -132,7 +135,7 @@ class StillCamera:
     @property
     def _output(self) -> Path:
         '''Generate the output file as a path'''
-        return os.path.join(self.save_dir,timestamp()+'.'+self.fmt)
+        return os.path.join(self.save_dir,timestamp()+HOSTNAME+'.'+self.fmt)
 
     def capture(self):
         '''Capture a single image using standard settings. The output file path is also auto generated and timestamped.'''
