@@ -209,12 +209,15 @@ def load_camera(config:ConfigParser=None) -> PiCamera:
     '''Load the Raspberry Pi camera and select settings'''
 
     picam = PiCamera()
+    logging.debug("Connected to camera")
     # FIXME: possibly useful as global or as a class property
     sleep(CAMERA_WARMUP_TIME)
 
     if config is None:
+        logging.debug("Loading default config")
         config = DEEPiConfig()
 
+    logging.debug("Modifying settings")
     picam.resolution = config.get('CAMERA','resolution')
     picam.framerate = config.getfloat('CAMERA','framerate')
     picam.hflip = config.getboolean('VIEW','hflip')
