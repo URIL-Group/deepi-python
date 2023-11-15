@@ -18,7 +18,7 @@ from deepi import DEEPiConfig
 logging.debug("Reading config file")
 config = DEEPiConfig('node.conf')
 logpath = Path(config.get('ALL','logpath'))
-loglevel = logging.DEBUG # TODO: get to work with config file
+loglevel = config.get('ALL','loglevel') # TODO: get to work with config file
 
 logpath.mkdir(parents=True, exist_ok=True)
 log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
@@ -78,7 +78,7 @@ camera = StillCamera(picam,
 logging.debug("Started socket streaming thread")
 while True:
     with  SocketStreamer(8000) as output:
-        
+        logging.info("Client connected")
         picam.start_recording(output, format='mjpeg', 
                               splitter_port=streaming_splitter,
                               resize=streaming_resolution)
