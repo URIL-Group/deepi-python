@@ -87,9 +87,7 @@ while True:
         camera.start_timelapse(timelapse_interval)
         try:
             while True:
-                picam.wait_recording(5, 
-                                     splitter_port=streaming_splitter, 
-                                     resize=streaming_resolution)
+                picam.wait_recording(5, splitter_port=streaming_splitter)
         except Exception as e:
             logging.debug(f"Error on wait_recording: {e}")
 
