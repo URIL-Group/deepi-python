@@ -98,8 +98,8 @@ while True:
             pass
         except Exception as e:
             logging.debug(f"Error on stop_recording: {e}")
-        recorder.stop()
-        camera.stop_timelapse()                            
+    recorder.stop()
+    camera.stop_timelapse()                            
 
     logging.debug("Lost connection or closed")
     logging.info(f'Sent {output._count} frames in {finish-start:.1f} seconds '\

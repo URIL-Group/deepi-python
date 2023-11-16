@@ -157,7 +157,7 @@ class StillCamera:
             return
         self.timelapse.stop()
         self.timelapse.join()
-        self.timelapse = None
+        # self.timelapse = None
 
 
 class TimelapseThread(Thread):
