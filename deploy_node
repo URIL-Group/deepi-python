@@ -84,8 +84,8 @@ while True:
                               splitter_port=streaming_splitter,
                               resize=streaming_resolution)
         start = time.time()
-        # recorder.start()
-        # camera.start_timelapse(timelapse_interval)
+        recorder.start()
+        camera.start_timelapse(timelapse_interval)
         try:
             while True:
                 picam.wait_recording(5, splitter_port=streaming_splitter)
