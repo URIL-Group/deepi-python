@@ -95,6 +95,7 @@ while True:
         
     finish = time.time()
     try:
+        logging.debug("Stopping socket recording")
         picam.stop_recording(splitter_port=streaming_splitter)
     except BrokenPipeError:
         logging.debug("Broken pipe on streaming: passing")
@@ -102,6 +103,7 @@ while True:
     except Exception as e:
         logging.debug(f"Error on stop_recording: {e}")
     
+    logging.debug("Stopping file recording")
     recorder.stop()
     camera.stop_timelapse()
     logging.debug("Lost connection or closed")
