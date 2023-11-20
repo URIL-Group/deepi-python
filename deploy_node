@@ -77,8 +77,7 @@ camera = StillCamera(picam,
 
 logging.debug("Started socket streaming thread")
 while True:
-    recorder.stop()
-    camera.stop_timelapse()
+
     with  SocketStreamer(8000) as output:
         logging.info("Client connected")
         picam.start_recording(output, format='mjpeg', 
@@ -97,14 +96,15 @@ while True:
         try:
             picam.stop_recording(splitter_port=streaming_splitter)
         except BrokenPipeError:
+            logging.debug("Broken pipe on streaming: passing")
             pass
         except Exception as e:
             logging.debug(f"Error on stop_recording: {e}")
     
-                        
-
+    recorder.stop()
+    camera.stop_timelapse()
     logging.debug("Lost connection or closed")
     logging.info(f'Sent {output._count} frames in {finish-start:.1f} seconds '\
                 f'({output._count/(finish-start):.1f}fps)')
     time.sleep(1)        
-logging.debug("Restarting socket streamer")
+    logging.debug("Restarting socket streamer")
