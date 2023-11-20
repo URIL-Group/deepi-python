@@ -96,8 +96,8 @@ while True:
     finish = time.time()
     try:
         logging.debug("Stopping socket recording")
-        logging.warning("Skipping stop socket recording")
-        # picam.stop_recording(splitter_port=streaming_splitter)
+        # logging.warning("Skipping stop socket recording")
+        picam.stop_recording(splitter_port=streaming_splitter)
     except BrokenPipeError:
         logging.debug("Broken pipe on streaming: passing")
         pass
