@@ -78,20 +78,20 @@ camera = StillCamera(picam,
 logging.debug("Started socket streaming thread")
 while True:
 
-    with  SocketStreamer(8000) as output:
+    with SocketStreamer(8000) as output:
         logging.info("Client connected")
         picam.start_recording(output, format='mjpeg', 
                               splitter_port=streaming_splitter,
                               resize=streaming_resolution)
         start = time.time()
         recorder.start()
-        camera.start_timelapse(timelapse_interval)
+        # camera.start_timelapse(timelapse_interval)
         try:
             while True:
                 picam.wait_recording(5, splitter_port=streaming_splitter)
         except Exception as e:
             logging.debug(f"Error on wait_recording: {e}")
-            
+    logging.debug("Socket closed (main thread)")    
         
     finish = time.time()
     try:
