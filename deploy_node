@@ -84,7 +84,7 @@ while True:
                               splitter_port=streaming_splitter,
                               resize=streaming_resolution)
         start = time.time()
-        recorder.start()
+        # recorder.start()
         # camera.start_timelapse(timelapse_interval)
         try:
             while True:
