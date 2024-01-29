@@ -108,15 +108,14 @@ if __name__ == "__main__":
     from deepi import PWMLightController as LightController
     from pathlib import Path
 
-
     # Config
     logging.debug("Reading config file")
     config = DEEPiConfig('deepi.conf')
     logpath = Path(config.get('ALL','logpath'))
-    loglevel = logging.DEBUG # TODO: get to work with config file
+    loglevel = config.get('ALL','loglevel') # TODO: get to work with config file
 
-    logging.basicConfig(format='%(levelname)s: %(message)s',
-                    level=logging.DEBUG)
+    logpath.mkdir(parents=True, exist_ok=True)
+    log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
     logging.debug("Reading config file")
     logging.info('Initializing camera')
