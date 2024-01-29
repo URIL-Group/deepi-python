@@ -7,14 +7,17 @@ import logging, sys
 from datetime import datetime
 from pathlib import Path
 
-from deepi import DEEPiConfig, load_camera
-# from deepi import make_camera, make_recorder, make_web_streamer, make_app
+from deepi import load_camera
+from deepi import VideoRecorder, SocketStreamer, StillCamera
+from deepi import RecorderThread
+from deepi import DEEPiConfig
+from deepi import WebSocketStream
 
 from deepi import PWMLightController as LightController
 
 # Config
 logging.debug("Reading config file")
-config = DEEPiConfig()
+config = DEEPiConfig('deepi.conf')
 
 # Logging
 log_path  = Path(config.get('ALL', 'logpath'))
@@ -56,13 +59,17 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
 logging.info('Initializing camera')
 picam = load_camera(config)
 
-# Set up cameras
-stillcam = make_camera(  picam, config)
+logging.info("Setting up video recorder")
+recorder = VideoRecorder(picam, 
+                         splitter_port=config.getint('RECORDER','splitter'),
+                         outpath=config.get('RECORDER','outpath'),
+                         )
 
-recorder = make_recorder(picam, config)
-if config.getboolean('RECORDER','recording'):
-    logging.info("Starting recording")
-    recorder.start()
+logging.info("Setting up still camera")
+camera = StillCamera(picam, 
+                     splitter_port=config.getint('STILLCAM','splitter'), 
+                     outpath=config.get('STILLCAM','outpath')
+                     )
 
 if config.getboolean('STREAM','streaming'):
     streamer = make_web_streamer(picam, config)

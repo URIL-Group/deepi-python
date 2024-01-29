@@ -23,8 +23,8 @@ def make_web_streamer(picam:PiCamera, config:ConfigParser=None):
 
     '''
     logging.debug("Setting up stream")
-    wsport = config.getint('STREAM','port')
-    streaming_res = to_resolution(config.get('STREAM', 'resolution'))
+    wsport = config.getint('WEBSTREAM','port')
+    streaming_res = to_resolution(config.get('WEBSTREAM', 'resolution'))
     return WebSocketStream(picam, wsport, resolution=streaming_res,
                            splitter_port=2)
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     # Config
     logging.debug("Reading config file")
-    config = DEEPiConfig()
+    config = DEEPiConfig('deepi.conf')
     logpath = Path(config.get('ALL','logpath'))
     loglevel = logging.DEBUG # TODO: get to work with config file
 
