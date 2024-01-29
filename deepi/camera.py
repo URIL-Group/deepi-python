@@ -16,7 +16,8 @@ from configparser import ConfigParser
 from picamera import PiCamera
 
 CAMERA_WARMUP_TIME = 2 # seconds
-MINIMUM_SPACE = 10e9 # 1 GB
+MINIMUM_SPACE = 10e9 # 1 GB 
+# TODO: Add constants to config file
 
 from platform import node
 HOSTNAME = node()
