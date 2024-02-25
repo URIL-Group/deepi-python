@@ -102,12 +102,11 @@ if __name__=='__main__':
 
 
     from configparser import ConfigParser
-    config = ConfigParser()
+    config = ConfigParser('../')
     sec = 'SENSORS'
-    oudir = Path(config.get(sec, 'outpath'))
-    if config.getboolean(sec, 'bar100'):
-        sensor = Bar100()
-    sampling_rate_Hz = config.getfloat(sec,'sampling_rate_Hz')
+    oudir = Path('~/data/')
+    sensor = Bar100()
+    sampling_rate_Hz = 1
 
     data_recorder = DataRecorder([sensor], outdir, sampling_rate_Hz)
 
