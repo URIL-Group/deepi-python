@@ -78,16 +78,12 @@ class DataRecorder(Thread):
             self.running = True
             logging.debug("Data recorder started")
             while self.running:
-                try:
-                    row = [timestamp()]
-                    [row.extend([x for x in s.read()]) for s in self.sensors]
-                    # logging.debug(row)
-                    # NOTE: stacked list comprehension to handle multiple returns
-                    log.writerow(row)
-                    time.sleep(self._dt)
-                except Exception as e:
-                    # TODO: handle error
-                    logging.error(e)
+                row = [timestamp()]
+                [row.extend([x for x in s.read()]) for s in self.sensors]
+                # logging.debug(row)
+                # NOTE: stacked list comprehension to handle multiple returns
+                log.writerow(row)
+                time.sleep(self._dt)
             logging.debug("Data recorder stopped")
 
     def stop(self):
