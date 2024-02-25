@@ -83,6 +83,7 @@ class DataRecorder(Thread):
                 logging.debug(row)
                 # NOTE: stacked list comprehension to handle multiple returns
                 log.writerow(row)
+                f.flush()
                 time.sleep(self._dt)
             logging.debug("Data recorder stopped")
 
