@@ -80,7 +80,6 @@ class DataRecorder(Thread):
             while self.running:
                 try:
                     row = [timestamp()]
-                    logging.debug(row)
                     [row.extend([x for x in s.read()]) for s in self.sensors]
                     # logging.debug(row)
                     # NOTE: stacked list comprehension to handle multiple returns
