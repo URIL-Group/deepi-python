@@ -76,8 +76,8 @@ class DataRecorder(Thread):
             logging.debug("Writing to data file")
 
             self.running = True
+            logging.debug("Data recorder started")
             while self.running:
-                logging.debug("Data recorder started")
                 row = [timestamp()]
                 [row.extend([x for x in s.read()]) for s in self.sensors]
                 logging.debug(row)

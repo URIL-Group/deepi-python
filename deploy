@@ -68,8 +68,8 @@ if config.getboolean(sec, 'bar100'):
     sampling_rate_Hz = config.getfloat(sec,'sampling_rate_Hz')
     if sensor.init():
         data_recorder = DataRecorder([sensor], outdir, sampling_rate_Hz)
+        logging.info("Starting data recorder")
         data_recorder.start()
-        logging.info("Data recorder started")
     else:
         logging.warning("Bar100 Sensor failed to initialized!")
 else:
