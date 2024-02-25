@@ -63,6 +63,7 @@ logging.info("Setting up data recorder")
 sec = 'SENSORS'
 outdir = Path(config.get(sec, 'outpath'))
 if config.getboolean(sec, 'bar100'):
+    logging.info("Setting up pressure sensor")
     sensor = Bar100()
     sampling_rate_Hz = config.getfloat(sec,'sampling_rate_Hz')
     if sensor.init():
