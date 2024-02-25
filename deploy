@@ -18,7 +18,7 @@ from deepi import DEEPiConfig
 from deepi.sensors import Bar100, DataRecorder
 # from deepi import SocketStreamingThread
 
-config = DEEPiConfig('deepi.conf')
+config = DEEPiConfig('hullcam.conf')
 
 # Config
 logpath = Path("/home/pi/log/")
