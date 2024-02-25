@@ -72,6 +72,8 @@ if config.getboolean(sec, 'bar100'):
         logging.info("Data recorder started")
     else:
         logging.warning("Bar100 Sensor failed to initialized!")
+else:
+    logging.info("Pressure sensor enabled in config file")
 
 # if config.getboolean('RECORDER','autostart'):
 #     logging.info("Starting recording")
