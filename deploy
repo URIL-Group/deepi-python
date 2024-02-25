@@ -15,14 +15,18 @@ from deepi import VideoRecorder, SocketStreamer
 from deepi import RecorderThread
 from deepi import StillCamera
 from deepi import DEEPiConfig
+from deepi.sensors import Bar100, DataRecorder
 # from deepi import SocketStreamingThread
+
+config = DEEPiConfig('deepi.conf')
 
 # Config
 logpath = Path("/home/pi/log/")
-loglevel = logging.INFO
+loglevel = logging.DEBUG
 logpath.mkdir(parents=True, exist_ok=True)
 log_file  = (logpath / datetime.utcnow().strftime('%Y%m%dT%H%M%S')).with_suffix('.txt')
 
+# Set up logging
 logging.root.handlers = []
 logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
                     level=loglevel,
@@ -30,9 +34,6 @@ logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s",
                               logging.StreamHandler(sys.stdout)
                               ]
                     )
-
-logging.debug("Reading config file")
-config = DEEPiConfig('deepi.conf')
 
 # Make sure other folders exist
 for sec in ['STILLCAM', 'RECORDER']:
@@ -48,8 +49,9 @@ logging.info("Set up recorder thread")
 recorder = VideoRecorder(picam, 
                          splitter_port=config.getint('RECORDER','splitter'),
                          outpath=config.get('RECORDER','outpath'))
-recorder_thread = RecorderThread(recorder, 
-                                 interval=config.getint('RECORDER','split'))
+# recorder_thread = RecorderThread(recorder, 
+#                                  interval=config.getint('RECORDER','split'))
+interval = config.getint('RECORDER','split')
 
 # if config.getboolean('TIMELAPSE',''):
 logging.info("Setting up still camera")
@@ -57,9 +59,22 @@ camera = StillCamera(picam, splitter_port=config.getint('STILLCAM','splitter'),
                      outpath=config.get('STILLCAM','outpath'),
                      fmt=config.get('STILLCAM','format'))
 
-if config.getboolean('RECORDER','autostart'):
-    logging.info("Starting recording")
-    recorder_thread.start()
+logging.info("Setting up data recorder")
+sec = 'SENSORS'
+outdir = Path(config.get(sec, 'outpath'))
+if config.getboolean(sec, 'bar100'):
+    sensor = Bar100()
+    sampling_rate_Hz = config.getfloat(sec,'sampling_rate_Hz')
+    if sensor.init():
+        data_recorder = DataRecorder([sensor], outdir, sampling_rate_Hz)
+        data_recorder.start()
+        logging.info("Data recorder started")
+    else:
+        logging.warning("Bar100 Sensor failed to initialized!")
+
+# if config.getboolean('RECORDER','autostart'):
+#     logging.info("Starting recording")
+#     recorder_thread.start()
 
 if config.getboolean('TIMELAPSE','autostart'):
     logging.info("Starting timelapse")
@@ -67,5 +82,21 @@ if config.getboolean('TIMELAPSE','autostart'):
 
 # logging.info("Set up socket streaming thread")
 # socket_streaming_thread = SocketStreamingThread(picam, port=8000, splitter_port=2)
+
+logging.info(f"Start recording {interval}")
+recorder.start()
+recorder.wait(interval)
+recorder.stop()
+camera.stop_timelapse()
+logging.info("Recording and timelapse stopped")
+if sensor.init():
+    data_recorder.stop()
+logging.info("Data recorder stopped")
+
+logging.info("Shutting off")
+import os
+os.system("sudo shutdown now -h")
+
+
 
 logging.info("All set, it should be a never ending loop now.")
