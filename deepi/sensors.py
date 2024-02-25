@@ -102,7 +102,7 @@ if __name__=='__main__':
 
 
     sec = 'SENSORS'
-    oudir = Path('~/data/')
+    outdir = Path('~/data/')
     sensor = Bar100()
     sampling_rate_Hz = 1
 
@@ -111,6 +111,6 @@ if __name__=='__main__':
     T = 5
     data_recorder.start()
     logging.info(f"Running for {T} seconds")
-    time.sleep(10)
+    time.sleep(T)
     data_recorder.stop()
     data_recorder.join()
