@@ -101,8 +101,6 @@ if __name__=='__main__':
                         level=logging.DEBUG)
 
 
-    from configparser import ConfigParser
-    config = ConfigParser('../')
     sec = 'SENSORS'
     oudir = Path('~/data/')
     sensor = Bar100()
