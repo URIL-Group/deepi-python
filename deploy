@@ -64,10 +64,6 @@ logging.info("Setting up data recorder")
 sec = 'SENSORS'
 outdir = Path(config.get(sec, 'outpath'))
 
-<<<<<<< HEAD
-
-=======
->>>>>>> dee69a7 (updated error handling)
 if config.getboolean(sec, 'bar100'):
     try:
         logging.info("Setting up pressure sensor")
@@ -76,10 +72,7 @@ if config.getboolean(sec, 'bar100'):
         data_recorder = DataRecorder([sensor], outdir, sampling_rate_Hz)
         logging.info("Starting data recorder")
         data_recorder.start()
-<<<<<<< HEAD
-=======
         pressure_sensor_working = True
->>>>>>> dee69a7 (updated error handling)
     except OSError:
         logging.warning("Bar100 Sensor failed to initialized, skipping.")
 else:
