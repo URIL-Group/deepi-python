@@ -27,8 +27,7 @@ class Bar100(KellerLD):
     def __init__(self):
         KellerLD.__init__(self)
         if not KellerLD.init(self):
-            logging.error("Failed to initialize Bar 100 sensor!")
-            # TODO: need to handle this error
+            raise "Failed to initialize Bar 100 sensor!"            
         time.sleep(3)
 
     def read(self):
@@ -99,10 +98,11 @@ if __name__=='__main__':
 
     sec = 'SENSORS'
     outdir = Path('~/data/')
-    sensor = Bar100()
     sampling_rate_Hz = 1
+    
 
-    data_recorder = DataRecorder([sensor], outdir, sampling_rate_Hz)
+    sensor = Bar100()
+    data_recorder = DataRecorder([sensor], outdir, sampling_rate_Hz)        
 
     T = 5
     data_recorder.start()
