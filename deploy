@@ -92,7 +92,10 @@ if config.getboolean('TIMELAPSE','autostart'):
 
 logging.info(f"Start recording {interval}")
 recorder.start()
-recorder.wait(interval)
+try:
+    recorder.wait(interval)
+except KeyboardInterrupt:
+    logging.warning("User interrupt")
 recorder.stop()
 camera.stop_timelapse()
 logging.info("Recording and timelapse stopped")
