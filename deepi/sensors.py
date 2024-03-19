@@ -72,7 +72,7 @@ class DataRecorder(Thread):
             log = csv.writer(f)
             
             log.writerow(self.header)
-            logging.debug("Writing to data file")
+            logging.debug(f"Writing to data file: {output}")
 
             self.running = True
             logging.debug("Data recorder started")
