@@ -102,10 +102,13 @@ logging.info("Recording and timelapse stopped")
 if pressure_sensor_working:
     data_recorder.stop()
     logging.info("Data recorder stopped")
-logging.info("Shutting off")
-import os
-os.system("sudo shutdown now -h")
 
-
-
-logging.info("All set, it should be a never ending loop now.")
+# Check for wifi before shutting off
+from subprocess import check_output
+wifi_ip = check_output(['hostname', '-I'])
+if wifi_ip is None:
+    logging.info("Shutting off")
+    import os
+    os.system("sudo shutdown now -h")
+else:
+    logging.info("Connected to WiFi, not shutting down.")
